@@ -56,9 +56,9 @@ Nuestra base cuenta con 149377 observaciones carrespondientes cada una a un sini
   -Tenemos muchas variable cualitativas, que hacemos con eso?
   -Serie temporal? 
   -Accidentes por año,¿en que año hay mas siniestros?,¿gravedad por año?,
-  -Accidentes por departamenteo,
+  -Accidentes por departamenteo(check)
   -Distribucion de accidentes por dia de la semana y por hora
-  -Mosaico tipo de siniestro-gravedad
+  -Mosaico tipo de siniestro-gravedad(check)
   -Que hacer con X e Y?Mapa?Accidentes por punto geografico
   -Shiny, segun variables cualitativas
     )
