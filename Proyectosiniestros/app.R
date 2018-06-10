@@ -21,7 +21,7 @@ ui <- fluidPage(
                             selectInput("seleccion","Elige tu grafico",
                                         choices = c("Tipo de siniestro" = "TS",
                                                     "Gravedad"="grav",
-                                                    "Siniestros por año",
+                                                    "Siniestros por año" = "SA",
                                                     "Siniestro por mes",#elegir bar o line
                                                     "Siniestros por dia",
                                                     "Siniestros por hora",
@@ -39,12 +39,17 @@ ui <- fluidPage(
                ),
                #Panel principal
                mainPanel(
-                 plotOutput("grafico")#El comentario lo haremos con caption inicalmente, o con un input de texto en otro caso
+                 conditionalPanel(condition = "input.seleccion == TS",
+                                  plotOutput("grafico1")),
+                 conditionalPanel(condition = "input.seleccion == grav",
+                                  plotOutput("grafico2")),
+                 conditionalPanel(condition = "input.seleccion == SA",
+                                  plotOutput("grafico3"))
                  
-               )
+               )#Main
                
-             )
-             ),
+             )#Layout
+             ),#Panel
     
     
     
@@ -53,30 +58,38 @@ ui <- fluidPage(
     
     tabPanel("Mapa"),
     tabPanel("Predicción")
-  )
+  )#Tabset
   
-)
+)#Fluid
  
 server <- function(input, output) {
   
-
-  selector<-({switch (input$seleccion,
-    TS = datos %>%
-      filter(Tipo_de_siniestro != 'SIN DATOS') %>%
-      ggplot(aes(x = fct_infreq(Tipo_de_siniestro))) + 
-      geom_bar() +
-      coord_flip() +
-      labs(x = "Tipo de siniestro", y = "Cantidad")
-    ,
-    grav = datos %>%
-      ggplot(aes(x = Gravedad)) + 
-      geom_bar() +
-      labs(x = "Gravedad del siniestro", y = "Cantidad"))
-  })
-    output$grafico<-renderPlot(selector
-    
-  )
   
+    
+    
+    output$grafico1<-renderPlot({if(input$seleccion == "TS")
+      
+      {datos %>%filter(Tipo_de_siniestro != 'SIN DATOS') %>%
+                ggplot(aes(x = fct_infreq(Tipo_de_siniestro))) + 
+                geom_bar() +
+                coord_flip() +
+                labs(x = "Tipo de siniestro", y = "Cantidad")}
+    }
+      
+      )
+    output$grafico2<-renderPlot({if(input$seleccion=="grav")
+      {datos %>%ggplot(aes(x = Gravedad)) + 
+                geom_bar() +
+                labs(x = "Gravedad del siniestro", y = "Cantidad")}
+    })
+    
+    output$grafico3<-renderPlot({if(input$seleccion=="SA")
+    {datos %>%
+        ggplot(aes(x = Año)) + 
+        geom_bar() +
+        labs(x = "Año", y = "Cantidad") }
+    })
+    
   
 }
 
