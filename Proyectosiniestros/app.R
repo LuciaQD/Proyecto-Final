@@ -19,19 +19,19 @@ ui <- fluidPage(
                #Panel lateral
                sidebarPanel(
                             selectInput("seleccion","Elige tu grafico",
-                                        choices = c("Tipo de siniestro",
-                                                    "Gravedad",
+                                        choices = c("Tipo de siniestro" = "TS",
+                                                    "Gravedad"="grav",
                                                     "Siniestros por año",
                                                     "Siniestro por mes",#elegir bar o line
                                                     "Siniestros por dia",
                                                     "Siniestros por hora",
                                                     "Siniestros por departamento",
                                                     "Siniestros por mes y por año",
-                                                    "Siniestros por mes y gravedad",
                                                     "Tipo de siniestro por año",
                                                     "Gravedad segun tipo de siniestro",
                                                     "Gravedad del siniestro por departamento",
                                                     "Gravedad del siniestro por año",
+                                                    "Gravedad por mes",
                                                     "Gravedad por dia de la semana"
                                                     )
                                         )
@@ -58,6 +58,25 @@ ui <- fluidPage(
 )
  
 server <- function(input, output) {
+  
+
+  selector<-({switch (input$seleccion,
+    TS = datos %>%
+      filter(Tipo_de_siniestro != 'SIN DATOS') %>%
+      ggplot(aes(x = fct_infreq(Tipo_de_siniestro))) + 
+      geom_bar() +
+      coord_flip() +
+      labs(x = "Tipo de siniestro", y = "Cantidad")
+    ,
+    grav = datos %>%
+      ggplot(aes(x = Gravedad)) + 
+      geom_bar() +
+      labs(x = "Gravedad del siniestro", y = "Cantidad"))
+  })
+    output$grafico<-renderPlot(selector
+    
+  )
+  
   
 }
 
