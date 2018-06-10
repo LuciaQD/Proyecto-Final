@@ -56,7 +56,7 @@ summary(datos)
 ## Graficos de variables cualitativas count
 
 # Tipo de siniestro en todos los años
-datos %>%
+a<-datos %>%
   filter(Tipo_de_siniestro != 'SIN DATOS') %>%
   ggplot(aes(x = fct_infreq(Tipo_de_siniestro))) + 
   geom_bar() +
@@ -64,75 +64,105 @@ datos %>%
   labs(x = "Tipo de siniestro", y = "Cantidad")
   
 # Gravedad de los siniestros en todos los a?os  
-datos %>%
+b<-datos %>%
   ggplot(aes(x = Gravedad)) + 
   geom_bar() +
   labs(x = "Gravedad del siniestro", y = "Cantidad")
- 
+
+# Siniestros por a?o
+c<-datos %>%
+  ggplot(aes(x = Año)) + 
+  geom_bar() +
+  labs(x = "A?o", y = "Cantidad") 
+
+# Siniestros por mes para todos los a?os
+d<-datos %>%
+  group_by(Mes) %>%
+  summarize(n = n()) %>%
+  ggplot(aes(Mes, n)) +
+  geom_line(size = 1) +
+  scale_x_continuous(breaks = seq(1,12,1), 
+                     labels = c("Enero", "Febrero", "Marzo", "Abril","Mayo", "Junio", "Julio", "Agosto", "Setiembre", "Octubre", "Noviembre", "Diciembre")) +
+  labs(x = "Mes", y = "Cantidad")
+
 # Siniestros por d?a de la semana en todos los a?os
-datos %>%
+e<-datos %>%
   ggplot(aes(x = Dia_semana)) + 
   geom_bar() + 
   labs(x = "D?a de la semana", y = "Cantidad") # ver sise puedo mostrar la semana ordenada
 
-# Siniestros por departamento en todos los a?os
-datos %>%
-  ggplot(aes(x = fct_infreq(Departamento))) + 
-  geom_bar() +
-  coord_flip() + 
-  labs(x = "Departamento", y = "Cantidad")
-
-# Siniestros por a?o
-datos %>%
-  ggplot(aes(x = Año)) + 
-  geom_bar() +
-  labs(x = "A?o", y = "Cantidad")
-
 # Siniestros por hora en todos los a?os
-datos %>%
+f<-datos %>%
   ggplot(aes(x = Hora)) + 
   geom_bar() +
   scale_x_continuous(breaks = seq(0,23,1)) +
   labs(x = "Hora del siniestro", y = "Cantidad")
 
+# Siniestros por departamento en todos los a?os
+g<-datos %>%
+  ggplot(aes(x = fct_infreq(Departamento))) + 
+  geom_bar() +
+  coord_flip() + 
+  labs(x = "Departamento", y = "Cantidad")
 
-## Otros gr?ficos
+#Siniestros por mes y por a?o
+h<-datos %>%
+  group_by(Mes, Año) %>%
+  summarize(n = n()) %>%
+  ggplot(aes(Mes, n, color = factor(Año))) +
+  geom_line(size = 1) +
+  scale_x_continuous(breaks = seq(1,12,1), 
+                     labels = c("Enero", "Febrero", "Marzo", "Abril","Mayo", "Junio", "Julio", "Agosto", "Setiembre", "Octubre", "Noviembre", "Diciembre")) +
+  labs(x = "Mes", y = "Cantidad", color = "Año")
+
+# Tipo de siniestros por a?o
+i<-datos %>%
+  filter(Tipo_de_siniestro != 'SIN DATOS') %>%
+  ggplot(aes(x = Año, fill = Tipo_de_siniestro)) + 
+  geom_bar(position = "fill") +
+  labs(x = "Año", y = "Frecuencia", fill = "Tipo de siniestro")
 
 # Tipo de siniestro y gravedad en todos los a?os
-datos %>%
+j<-datos %>%
   filter(Tipo_de_siniestro != 'SIN DATOS') %>%
   ggplot(aes(x = Tipo_de_siniestro, fill = Gravedad)) + 
   geom_bar(position = "fill") + 
   coord_flip() +
   labs(x = "Tipo de siniestro", y = "Fracuencia") 
- # theme(legend.position = "bottom", legend.title = element_text(face = "bold"))
-  
+# theme(legend.position = "bottom", legend.title = element_text(face = "bold"))
+
 # Departamento y gravedad en todos los a?os
-datos %>%
+k<-datos %>%
   ggplot(aes(x = Departamento, fill = Gravedad)) + 
   geom_bar(position = "fill") +
   coord_flip() +
   labs(x = "Departamento", y = "Frecuencia")
 
 # Gravedad de los siniestros por a?o
-datos %>%
+l<-datos %>%
   ggplot(aes(x = Año, fill = Gravedad)) + 
   geom_bar(position = "fill") +
   labs(x = "Año", y = "Frecuencia") #Parece que hay una tendencia en los no lesionados
 
-# Tipo de siniestros por a?o
-datos %>%
-  filter(Tipo_de_siniestro != 'SIN DATOS') %>%
-  ggplot(aes(x = Año, fill = Tipo_de_siniestro)) + 
-  geom_bar(position = "fill") +
-  labs(x = "Año", y = "Frecuencia", fill = "Tipo de siniestro")
+#Siniestros por mes y por gravedad
+m<-datos %>%
+  group_by(Mes, Gravedad) %>%
+  summarize(n = n()) %>%
+  ggplot(aes(Mes, n, color = factor(Gravedad))) +
+  geom_line(size = 1) +
+  scale_x_continuous(breaks = seq(1,12,1), 
+                     labels = c("Enero", "Febrero", "Marzo", "Abril","Mayo", "Junio", "Julio", "Agosto", "Setiembre", "Octubre", "Noviembre", "Diciembre")) +
+  labs(x = "Mes", y = "Cantidad", color = "Gravedad")
 
 # Gravedad por d?a de la semana
-datos %>%
+n<-datos %>%
   ggplot(aes(x = Dia_semana, fill = Gravedad)) + 
   geom_bar(position = "fill") + 
   labs(x = "Día de la semana", y = "Cantidad")
 
+
+
+## Otros gr?ficos
 # Mosaico: Gravedad por d?a de la semana
 datos %>%
   group_by(Gravedad, Dia_semana) %>%
@@ -153,32 +183,6 @@ datos %>%
   theme(axis.text.x = element_text(angle = 90))
 
 
-#Siniestros por mes y por a?o
-datos %>%
-  group_by(Mes, Año) %>%
-  summarize(n = n()) %>%
-  ggplot(aes(Mes, n, color = factor(Año))) +
-  geom_line(size = 1) +
-  scale_x_continuous(breaks = seq(1,12,1), 
-    labels = c("Enero", "Febrero", "Marzo", "Abril","Mayo", "Junio", "Julio", "Agosto", "Setiembre", "Octubre", "Noviembre", "Diciembre")) +
-  labs(x = "Mes", y = "Cantidad", color = "Año")
 
-#Siniestros por mes y por gravedad
-datos %>%
-  group_by(Mes, Gravedad) %>%
-  summarize(n = n()) %>%
-  ggplot(aes(Mes, n, color = factor(Gravedad))) +
-  geom_line(size = 1) +
-  scale_x_continuous(breaks = seq(1,12,1), 
-                     labels = c("Enero", "Febrero", "Marzo", "Abril","Mayo", "Junio", "Julio", "Agosto", "Setiembre", "Octubre", "Noviembre", "Diciembre")) +
-  labs(x = "Mes", y = "Cantidad", color = "Gravedad")
 
-# Siniestros por mes para todos los a?os
-datos %>%
-  group_by(Mes) %>%
-  summarize(n = n()) %>%
-  ggplot(aes(Mes, n)) +
-  geom_line(size = 1) +
-  scale_x_continuous(breaks = seq(1,12,1), 
-                     labels = c("Enero", "Febrero", "Marzo", "Abril","Mayo", "Junio", "Julio", "Agosto", "Setiembre", "Octubre", "Noviembre", "Diciembre")) +
-  labs(x = "Mes", y = "Cantidad")
+
