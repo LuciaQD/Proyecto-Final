@@ -216,15 +216,13 @@ countunique <-uystates_df %>%
   summarise(mlong = mean(long), mlat = mean(lat))
 
 
-ggplot() + 
+ggplot() +
   geom_polygon(data = uystates_df, aes(x = long, y = lat, group = group, fill =
                                          count), color = "black", size = 0.25) +
   geom_text(data =countunique ,aes(label = round(count,2), x = mlong, y = mlat))+
   theme(aspect.ratio = 1) + labs(fill = "Cantidad")+
-  scale_fill_gradient2( midpoint = mean(count)) +
-  theme_opts 
-
-
-
+  scale_fill_gradient2( midpoint = mean(count),low = "red", mid = "white",
+                        high = "blue") +
+  theme_opts
 
 
