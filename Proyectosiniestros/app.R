@@ -1,7 +1,6 @@
 
 library(shiny)
 
-
 ui <- fluidPage(
   titlePanel("Siniestros en el periodo 2013-2017"),
   tabsetPanel(
@@ -19,7 +18,7 @@ ui <- fluidPage(
                #Panel lateral
                sidebarPanel(
                             selectInput("seleccion","Elige tu grafico",
-                                        choices = c("Tipo de siniestro" = "TS",
+                                        choices = c("TS",
                                                     "Gravedad"="grav",
                                                     "Siniestros por año" = "SA",
                                                     "Siniestro por mes",#elegir bar o line
@@ -39,12 +38,7 @@ ui <- fluidPage(
                ),
                #Panel principal
                mainPanel(
-                 conditionalPanel(condition = "input.seleccion == TS",
-                                  plotOutput("grafico1")),
-                 conditionalPanel(condition = "input.seleccion == grav",
-                                  plotOutput("grafico2")),
-                 conditionalPanel(condition = "input.seleccion == SA",
-                                  plotOutput("grafico3"))
+                 plotOutput("grafico")
                  
                )#Main
                
@@ -67,16 +61,24 @@ server <- function(input, output) {
   
     
     
-    output$grafico1<-renderPlot({if(input$seleccion == "TS")
+    output$grafico<-renderPlot(
+      {if(input$seleccion == "TS")
       
       {datos %>%filter(Tipo_de_siniestro != 'SIN DATOS') %>%
                 ggplot(aes(x = fct_infreq(Tipo_de_siniestro))) + 
                 geom_bar() +
                 coord_flip() +
                 labs(x = "Tipo de siniestro", y = "Cantidad")}
-    }
+    
       
-      )
+      
+      else{if(input$seleccion =="grav")
+      {datos %>%ggplot(aes(x = Gravedad)) + 
+          geom_bar() +
+          labs(x = "Gravedad del siniestro", y = "Cantidad")}
+    
+      
+      }})
     output$grafico2<-renderPlot({if(input$seleccion=="grav")
       {datos %>%ggplot(aes(x = Gravedad)) + 
                 geom_bar() +

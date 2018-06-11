@@ -64,3 +64,12 @@ Nuestra base cuenta con 149377 observaciones carrespondientes cada una a un sini
     )
 
 ##Analisis exploratorio de los datos
+
+
+###Cosas para hacer
+-Restar graficos irrelevantes
+-Cambiar selectinput para año y variable(el filtro de año va afuera del if)
+_Usar tags para comentarios
+-Cambiar paleta de colores del mapa y cambiar la "variable" por la que contamos
+-Grafico de series
+-Extra:Generar mapa con puntos de concentracion
