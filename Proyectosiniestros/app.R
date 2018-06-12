@@ -17,7 +17,7 @@ ui <- fluidPage(
                
                #Panel lateral
                sidebarPanel(
-                            selectInput("seleccion","Elige tu grafico",
+                            selectInput("seleccion","Elige tu variable",
                                         choices = c("TS",
                                                     "Gravedad"="grav",
                                                     "Siniestros por año" = "SA",
@@ -33,7 +33,12 @@ ui <- fluidPage(
                                                     "Gravedad por mes",
                                                     "Gravedad por dia de la semana"
                                                     )
-                                        )
+                                        ),
+                            selectInput("selaño","Eleccion de año",choices = c("2013",
+                                                                               "2014",
+                                                                               "2015",
+                                                                               "2016",
+                                                                               "2017"))
                  
                ),
                #Panel principal
@@ -58,10 +63,15 @@ ui <- fluidPage(
  
 server <- function(input, output) {
   
-  
-    
-    
+  #Intento de cambio de año
     output$grafico<-renderPlot(
+      datos%>%filter(Año==input$selaño)%>%
+        ggplot(aes(x = Gravedad)) + 
+        geom_bar() +
+        labs(x = "Gravedad del siniestro", y = "Cantidad")
+    )
+    
+    output$grafico1<-renderPlot(
       {if(input$seleccion == "TS")
       
       {datos %>%filter(Tipo_de_siniestro != 'SIN DATOS') %>%
@@ -85,12 +95,6 @@ server <- function(input, output) {
                 labs(x = "Gravedad del siniestro", y = "Cantidad")}
     })
     
-    output$grafico3<-renderPlot({if(input$seleccion=="SA")
-    {datos %>%
-        ggplot(aes(x = Año)) + 
-        geom_bar() +
-        labs(x = "Año", y = "Cantidad") }
-    })
     
   
 }
