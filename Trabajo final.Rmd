@@ -6,7 +6,7 @@ output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ## Introducción
@@ -99,7 +99,7 @@ r <- datos %>%
 #Gráfico
 datos %>%
   ggplot(aes(x = Año)) + 
-  geom_bar(fill = "skyblue") +
+  geom_bar(fill = "seagreen4") +
   labs(x = "Año", y = "Cantidad") +
   ggtitle("Siniestros por año")
 
