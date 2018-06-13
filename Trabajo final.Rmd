@@ -101,7 +101,7 @@ datos %>%
   ggplot(aes(x = Año)) + 
   geom_bar(fill = "seagreen4") +
   labs(x = "Año", y = "Cantidad") +
-  ggtitle("Siniestros por año")
+  ggtitle("Siniestros por año") 
 
 cap1 <- "A partir del gráfico podemos observar que del año 2013 al 2015 hubo un incremento sostenido en la cantidad de siniestros habiendo un decenso en el año 2016 para volver a crecer en el 2017. De todas formas no se observa una variación importante a lo largo del periodo."
 
