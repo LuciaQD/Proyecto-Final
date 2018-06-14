@@ -1,6 +1,6 @@
 ---
-title: "Siniestros de tránsito en Uruguay"
-author: "Bruno Bellagamba y Lucía Quintero"
+title: "Siniestros de trÃ¡nsito en Uruguay"
+author: "Bruno Bellagamba y LucÃ­a Quintero"
 date: "Junio 2018"
 output: pdf_document
 ---
@@ -9,28 +9,28 @@ output: pdf_document
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-## Introducción
+## IntroducciÃ³n
 
-El siguiente trabajo se enmarca dentro de la materia "Nuevas tecnologías para el análisis estadístico de datos" de la carrera Licenciatura en Estadística.  
+El siguiente trabajo se enmarca dentro de la materia "Nuevas tecnologÃ­as para el anÃ¡lisis estadÃ­stico de datos" de la carrera Licenciatura en EstadÃ­stica.  
 
-El principal objetivo del mismo es aplicar las técnicas aprendidas en el curso para realizar el análisis exploratorio de los datos seleccionados, lo cuál también implica incluir visualizaciones apropiadas y una buena interpretación de las mismas.
-Como objetivos adicionales se busca que el trabajo sea completamente reproducible y esté disponible en GitHub para colaboraciones futuras, y poder comunicar los principales resultados del mismo mediante una aplicación shiny.
+El principal objetivo del mismo es aplicar las tÃ©cnicas aprendidas en el curso para realizar el an?lisis exploratorio de los datos seleccionados, lo cu?l tambi?n implica incluir visualizaciones apropiadas y una buena interpretaci?n de las mismas.
+Como objetivos adicionales se busca que el trabajo sea completamente reproducible y est? disponible en GitHub para colaboraciones futuras, y poder comunicar los principales resultados del mismo mediante una aplicaci?n shiny.
 
-Para alcanzar los objetivos planteados se utilizan diversas herramientas de R destacándose el uso del paquete *tidyverse*, en particular los paquetes *dplyr* y *ggplot*.
-También cabe destacar el uso de *rmarkdown* para la realización del presente informe y el paquete *shiny* para realizarla aplicación con los principales resultados.
+Para alcanzar los objetivos planteados se utilizan diversas herramientas de R destac?ndose el uso del paquete *tidyverse*, en particular los paquetes *dplyr* y *ggplot*.
+Tambi?n cabe destacar el uso de *rmarkdown* para la realizaci?n del presente informe y el paquete *shiny* para realizarla aplicaci?n con los principales resultados.
 
-La metodología para realizar el análisis exploratorio consiste en realizar preguntas de interés y responderlas a través del uso de las herramientas anteriormente mencionadas.
+La metodolog?a para realizar el an?lisis exploratorio consiste en realizar preguntas de inter?s y responderlas a trav?s del uso de las herramientas anteriormente mencionadas.
 
 ## Datos
 
-Los datos seleccionados para el presente trabajo corresponden a los siniestros de tránsito ocurridos en Uruguay en el período 2013-2017. Los mismos se obtuvieron de la página web de la UNASEV *(ver enlace en la sección Bibliografía)* Se selecciona esta base para trabajar ya que se considera un tema de interés a nivel nacional y sobre el cuál se trabaja continuamente con el fin de disminuir la cantidad de siniestros.
+Los datos seleccionados para el presente trabajo corresponden a los siniestros de tr?nsito ocurridos en Uruguay en el per?odo 2013-2017. Los mismos se obtuvieron de la p?gina web de la UNASEV *(ver enlace en la secci?n Bibliograf?a)* Se selecciona esta base para trabajar ya que se considera un tema de inter?s a nivel nacional y sobre el cu?l se trabaja continuamente con el fin de disminuir la cantidad de siniestros.
 
-La base cuenta con 149.377 observaciones carrespondientes cada una a un siniestro de tránsito, y 10 variables que representan detalles de los mismos como el lugar, gravedad, fecha y hora y tipo de siniestro.
-Para poder realizar un mejor análisis se agregaron las variables Año y Mes, totalizando 12 variables para trabajar.
+La base cuenta con 149.377 observaciones carrespondientes cada una a un siniestro de tr?nsito, y 10 variables que representan detalles de los mismos como el lugar, gravedad, fecha y hora y tipo de siniestro.
+Para poder realizar un mejor an?lisis se agregaron las variables A?o y Mes, totalizando 12 variables para trabajar.
 
-A partir de una primera aproximación con los datos se observa que la mayoría de las variables son cualitativas (Calle, Tipo de siniestro, Gravedad, Día de la semana, Departamento, Localidad), y las restantes cuantitativas (Año, Mes, Hora, longitud, latitud). **VER SI ESTO ES ASÍ Y QUE PASA CON LA FECHA**. En principio no se detecta la presencia de datos faltantes.
+A partir de una primera aproximaci?n con los datos se observa que la mayor?a de las variables son cualitativas (Calle, Tipo de siniestro, Gravedad, D?a de la semana, Departamento, Localidad), y las restantes cuantitativas (A?o, Mes, Hora, longitud, latitud). **VER SI ESTO ES AS? Y QUE PASA CON LA FECHA**. En principio no se detecta la presencia de datos faltantes.
 
-Para el análisis se decide trabajar con las variables Tipo de siniestro, Gravedad, Día de la semana, Departamento, Hora, Año y Mes. **Si nos da el tiempo incluimos latitud y longitud parael mapa en shiny, sino lo agregamos en comentarios finales como posible trabajo futuro**  
+Para el an?lisis se decide trabajar con las variables Tipo de siniestro, Gravedad, D?a de la semana, Departamento, Hora, A?o y Mes. **Si nos da el tiempo incluimos latitud y longitud parael mapa en shiny, sino lo agregamos en comentarios finales como posible trabajo futuro**  
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
 library(tidyverse)
@@ -63,7 +63,7 @@ Oeste_2017 <- read_csv("Siniestros/2017/Oeste_2017.txt")
 Norte_2017 <- read_csv("Siniestros/2017/Norte_2017.txt")
 Montevideo_2017 <- read_csv("Siniestros/2017/Montevideo_2017.txt")
 
-#2 Armamos las bases por año
+#2 Armamos las bases por a?o
 
 base2013 <- bind_rows(Este_2013, Oeste_2013, Norte_2013, Montevideo_2013)
 base2014 <- bind_rows(Este_2014, Oeste_2014, Norte_2014, Montevideo_2014) 
@@ -71,57 +71,57 @@ base2015 <- bind_rows(Este_2015, Oeste_2015, Norte_2015, Montevideo_2015)
 base2016 <- bind_rows(Este_2016, Oeste_2016, Norte_2016, Montevideo_2016)  
 base2017 <- bind_rows(Este_2017, Oeste_2017, Norte_2017,Montevideo_2017)
 
-#3 Armamos la base de todos los años, cambiamos los nombres de las variables con espacio en el mismo y agregamos las variables Año y Mes 
+#3 Armamos la base de todos los a?os, cambiamos los nombres de las variables con espacio en el mismo y agregamos las variables A?o y Mes 
 
 datos <- as.data.frame(bind_rows(base2013, base2014, base2015, base2016, base2017)) %>% 
   rename_at(3, ~"Tipo_de_siniestro") %>%  
   rename_at(5, ~ "Dia_semana") %>%
-  mutate(Año = year(as.Date(Fecha, "%d/%m/%Y")), Mes = month(as.Date(Fecha, "%d/%m/%Y")))
+  mutate(A?o = year(as.Date(Fecha, "%d/%m/%Y")), Mes = month(as.Date(Fecha, "%d/%m/%Y")))
 
 
 s <- summary(datos)
 
 ```
 
-## Análisis Exploratorio
+## An?lisis Exploratorio
 
-Comenzamos con un análisis temporal intentando ver las variaciones en los años, meses, dias de la semana y hora de los siniestros
+Comenzamos con un an?lisis temporal intentando ver las variaciones en los a?os, meses, dias de la semana y hora de los siniestros
 
-En primer lugar nos planteamos cuantficar el número de siniestros en los diferentes años de análisis para luego realizar un gráfico de barras donde pretendemos ver la variación de los mismos.
+En primer lugar nos planteamos cuantficar el n?mero de siniestros en los diferentes a?os de an?lisis para luego realizar un gr?fico de barras donde pretendemos ver la variaci?n de los mismos.
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = cap1, fig.width = 5, fig.height = 4}
 
 #Resumen de datos
 r <- datos %>%
-      group_by(Año) %>%
+      group_by(A?o) %>%
       summarise(Cantidad = n())
 
-#Gráfico
+#Gr?fico
 datos %>%
-  ggplot(aes(x = Año)) + 
+  ggplot(aes(x = A?o)) + 
   geom_bar(fill = "seagreen4") +
-  labs(x = "Año", y = "Cantidad") +
-  ggtitle("Siniestros por año") 
+  labs(x = "A?o", y = "Cantidad") +
+  ggtitle("Siniestros por a?o") 
 
-cap1 <- "A partir del gráfico podemos observar que del año 2013 al 2015 hubo un incremento sostenido en la cantidad de siniestros habiendo un decenso en el año 2016 para volver a crecer en el 2017. De todas formas no se observa una variación importante a lo largo del periodo."
+cap1 <- "A partir del gr?fico podemos observar que del a?o 2013 al 2015 hubo un incremento sostenido en la cantidad de siniestros habiendo un decenso en el a?o 2016 para volver a crecer en el 2017. De todas formas no se observa una variaci?n importante a lo largo del periodo."
 
 ```
 
-grafico por mes por año
-grafico por dia de la semana por año
-grafico por hora por año 
+grafico por mes por a?o
+grafico por dia de la semana por a?o
+grafico por hora por a?o 
 
 
 
-## Aplicación Shiny
+## Aplicaci?n Shiny
 
 ## Comentarios finales
 
-## Bibliografía
+## Bibliograf?a
 
 - R for Data Science - Garrett Grolemund, Hadley Wickham (<http://r4ds.had.co.nz/>)  
 - ggplot2 Elegant Graphics for Data Analysis - Hadley Wickham  
-- Datos: Página web UNASEV (<http://aplicaciones.unasev.gub.uy/mapas/AdministracionMapaIndicadores/AdministracionMapaIndicadores_Alta>)
+- Datos: P?gina web UNASEV (<http://aplicaciones.unasev.gub.uy/mapas/AdministracionMapaIndicadores/AdministracionMapaIndicadores_Alta>)
 
 ###Cosas para hacer
 -Restar graficos irrelevantes
