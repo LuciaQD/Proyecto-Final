@@ -233,7 +233,7 @@ server <- function(input, output) {
         scale_fill_gradient2( midpoint = mean(count),low = "red", mid = "white",
                               high = "blue") +
         theme_opts
-      
+    
     )
     
 }

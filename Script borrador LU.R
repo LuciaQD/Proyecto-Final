@@ -188,7 +188,6 @@ datos %>%
 #Si hacemos un filter antees en vez de esto, podremos elegir que cantidades mostrar segun variables
 
 
-
 count<-datos%>%group_by(Departamento)%>%summarise(n=n())
 count<-datos%>%filter(Tipo_de_siniestro == "DESPISTE")%>%group_by(Departamento)%>%summarise(n=n())
 count<-count$n
