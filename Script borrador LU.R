@@ -183,21 +183,24 @@ datos %>%
 
 ##Mapa
 
+
+#Esto nos genera un mapa que colorea los departament segun catidad de accidentes totales
+#Si hacemos un filter antees en vez de esto, podremos elegir que cantidades mostrar segun variables
+
+
+
 count<-datos%>%group_by(Departamento)%>%summarise(n=n())
+count<-datos%>%filter(Tipo_de_siniestro == "DESPISTE")%>%group_by(Departamento)%>%summarise(n=n())
 count<-count$n
 uruguay <- getData("GADM", country = "UY", level = 0)
-
 uruguay_states <- getData("GADM", country = "UY", level = 1)
-
 uystates_UTM <-spTransform(uruguay_states, CRS("+init=EPSG:5383")) 
 NAME_1 <- uystates_UTM@data$NAME_1
 count_df <- data.frame(NAME_1, count)
-
 uystates_UTM@data$id <- rownames(uystates_UTM@data)
 uystates_UTM@data <- plyr::join(uystates_UTM@data, count_df, by="NAME_1")
 uystates_df <- tidy(uystates_UTM)
 uystates_df <- plyr::join(uystates_df,uystates_UTM@data, by="id")
-
 uystates_df <-uystates_df %>% filter(!(NAME_1=="Rivera"& lat<6400000)) #un error en el mapa que hay que sacar
 theme_opts <- list(theme(panel.grid.minor = element_blank(),
                          panel.grid.major = element_blank(),
@@ -214,8 +217,6 @@ theme_opts <- list(theme(panel.grid.minor = element_blank(),
 countunique <-uystates_df %>%
   group_by(NAME_1) %>%
   summarise(mlong = mean(long), mlat = mean(lat))
-
-
 ggplot() +
   geom_polygon(data = uystates_df, aes(x = long, y = lat, group = group, fill =
                                          count), color = "black", size = 0.25) +
@@ -225,4 +226,14 @@ ggplot() +
                         high = "blue") +
   theme_opts
 
+
+##Las 8 opciones de filtro posibles
+if(input$selecanual == "Todos" & input$selects == "Todos" & input$selecgrav == "Todos"){count<-datos%>%group_by(Departamento)%>%summarise(n=n())}
+else if(input$selecanual == "Todos" & input$selects != "Todos" & input$selecgrav == "Todos"){count<-datos%>%filter(Tipo_de_siniestro==input$selects)%>%group_by(Departamento)%>%summarise(n=n())}
+else if(input$selecanual != "Todos" & input$selects == "Todos" & input$selecgrav == "Todos"){count<-datos%>%filter(Año==input$selecanual)%>%group_by(Departamento)%>%summarise(n=n())}
+else if(input$selecanual == "Todos" & input$selects == "Todos" & input$selecgrav != "Todos"){count<-datos%>%filter(Gravedad==input$selecgrav)%>%group_by(Departamento)%>%summarise(n=n())}
+else if(input$selecanual == "Todos" & input$selects != "Todos" & input$selecgrav != "Todos"){count<-datos%>%filter(Gravedad==input$selecgrav & Tipo_de_siniestro==input$selects)%>%group_by(Departamento)%>%summarise(n=n())}
+else if(input$selecanual != "Todos" & input$selects == "Todos" & input$selecgrav != "Todos"){count<-datos%>%filter(Gravedad==input$selecgrav & Año==input$selecanual)%>%group_by(Departamento)%>%summarise(n=n())}
+else if(input$selecanual != "Todos" & input$selects != "Todos" & input$selecgrav == "Todos"){count<-datos%>%filter(Año==input$selecanual & Tipo_de_siniestro==input$selects)%>%group_by(Departamento)%>%summarise(n=n())}
+else if(input$selecanual != "Todos" & input$selects != "Todos" & input$selecgrav != "Todos"){count<-datos%>%filter(Año==input$selecanual & Gravedad==input$selecgrav & Tipo_de_siniestro==input$selects)%>%group_by(Departamento)%>%summarise(n=n())}
 
