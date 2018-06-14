@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Introducción
 
-El siguiente trabajo se enmarca dentro de la materia "Nuevas tecnologías para el análisis estadístico de datos" de la carrera Licenciatura en Estadística. 
+El siguiente trabajo se enmarca dentro de la materia "Nuevas tecnologías para el análisis estadístico de datos" de la carrera Licenciatura en Estadística.  
 
 El principal objetivo del mismo es aplicar las técnicas aprendidas en el curso para realizar el análisis exploratorio de los datos seleccionados, lo cuál también implica incluir visualizaciones apropiadas y una buena interpretación de las mismas.
 Como objetivos adicionales se busca que el trabajo sea completamente reproducible y esté disponible en GitHub para colaboraciones futuras, y poder comunicar los principales resultados del mismo mediante una aplicación shiny.
