@@ -2,11 +2,13 @@
 title: "Siniestros de tránsito en Uruguay"
 author: "Bruno Bellagamba y Lucía Quintero"
 date: "Junio 2018"
-output: pdf_document
+output: 
+  pdf_document: default
+  fig_caption: TRUE
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = TRUE, tidy.opts = list(width.cutoff = 50), tidy = TRUE, fig.pos = 'h', out.extra = '')
 ```
 
 ## Introducción
@@ -150,7 +152,7 @@ grafico por horas
 
 datos %>%
   ggplot(aes(x = Hora)) + 
-  geom_bar() +
+  geom_bar(fill = "seagreen4") +
   scale_x_continuous(breaks = seq(0,23,1)) +
   labs(x = "Hora del siniestro", y = "Cantidad") +
   facet_wrap(~ Año)
@@ -159,14 +161,74 @@ cap4 <- ""
 
 ```
 
+Analisis por tipo de siniestro y gravedad de los mismos, vamos a cruzar estas variables y luego vamos a verlas con el factor temporal
+
+Tipos de siniestros en los distintos años
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = cap5, fig.width = 6, fig.height = 4}
+
+datos %>%
+  ggplot(aes(x = fct_infreq(Tipo_de_siniestro))) + 
+  geom_bar(fill = "seagreen4") +
+  coord_flip() +
+  facet_wrap(~ Año) +
+  labs(x = "Tipo de siniestro", y = "Cantidad") 
+
+cap5 <- ""
+
+```
+
+Gravedad de los siniestros por año
+```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = cap6, fig.width = 6, fig.height = 4}
+
+datos %>%
+  ggplot(aes(x = Gravedad)) + 
+  geom_bar(fill = "seagreen4") +
+  facet_wrap(~ Año) +
+  labs(x = "Gravedad del siniestro", y = "Cantidad")
+
+cap6 <- ""
+
+```
+
+gravedad y tupo de siniestros ( la idea es hacer mosaico pero no funciona)
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = cap7, fig.width = 6, fig.height = 4}
+
+datos %>%
+  ggplot(aes(x = Tipo_de_siniestro, fill = Gravedad)) + 
+  geom_bar(position = "fill") + 
+  coord_flip() +
+  facet_wrap(~ Año) +
+  labs(x = "Tipo de siniestro", y = "Fracuencia") 
+
+cap7 <- ""
+
+```
+
+gravedad por dia de la semana
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = cap8, fig.width = 6, fig.height = 4}
+
+datos %>%
+  mutate(Dia_semana = wday(Fecha, label = TRUE)) %>%
+  ggplot(aes(x = factor(Dia_semana), fill = Gravedad)) + 
+  geom_bar(position = "fill") + 
+  facet_wrap(~ Año) +
+  scale_x_discrete(labels = c("DOMINGO", "LUNES", "MARTES", "MIÉRCOLES", "JUEVES","VIERNES", "SÁBADO" )) +
+  labs(x = "Día de la semana", y = "Cantidad")
+
+cap8 <- ""
+
+```
 
 
 
-## Aplicaci?n Shiny
+## Aplicación Shiny
 
 ## Comentarios finales
 
-## Bibliograf?a
+## Bibliografía
 
 - R for Data Science - Garrett Grolemund, Hadley Wickham (<http://r4ds.had.co.nz/>)  
 - ggplot2 Elegant Graphics for Data Analysis - Hadley Wickham  
