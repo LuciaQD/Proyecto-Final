@@ -236,3 +236,4 @@ else if(input$selecanual != "Todos" & input$selects == "Todos" & input$selecgrav
 else if(input$selecanual != "Todos" & input$selects != "Todos" & input$selecgrav == "Todos"){count<-datos%>%filter(Año==input$selecanual & Tipo_de_siniestro==input$selects)%>%group_by(Departamento)%>%summarise(n=n())}
 else if(input$selecanual != "Todos" & input$selects != "Todos" & input$selecgrav != "Todos"){count<-datos%>%filter(Año==input$selecanual & Gravedad==input$selecgrav & Tipo_de_siniestro==input$selects)%>%group_by(Departamento)%>%summarise(n=n())}
 
+
