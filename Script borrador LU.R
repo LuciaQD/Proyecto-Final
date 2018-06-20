@@ -46,8 +46,8 @@ base2017 <- bind_rows(Este_2017,Oeste_2017,Norte_2017,Montevideo_2017)
 datos <- as.data.frame(bind_rows(base2013, base2014, base2015, base2016, base2017)) %>% 
           rename_at(3, ~"Tipo_de_siniestro") %>%  
           rename_at(5, ~ "Dia_semana") %>%
+          filter(Tipo_de_siniestro != 'SIN DATOS') %>%
           mutate(Año = year(as.Date(Fecha, "%d/%m/%Y")), Mes = month(as.Date(Fecha, "%d/%m/%Y")))
-         
 
 summary(datos)
 
@@ -190,6 +190,8 @@ datos %>%
 
 count<-datos%>%group_by(Departamento)%>%summarise(n=n())
 count<-datos%>%filter(Año=="2017" & Gravedad=="LEVE" & Tipo_de_siniestro=="DESPISTE")%>%group_by(Departamento)%>%summarise(n=n())
+
+mapa<- function(count) {
 count<-count$n
 uruguay <- getData("GADM", country = "UY", level = 0)
 uruguay_states <- getData("GADM", country = "UY", level = 1)
@@ -216,7 +218,7 @@ theme_opts <- list(theme(panel.grid.minor = element_blank(),
 countunique <-uystates_df %>%
   group_by(NAME_1) %>%
   summarise(mlong = mean(long), mlat = mean(lat))
-a<-ggplot() +
+ggplot() +
   geom_polygon(data = uystates_df, aes(x = long, y = lat, group = group, fill =
                                          count), color = "black", size = 0.25) +
   geom_text(data =countunique ,aes(label = round(count,2), x = mlong, y = mlat))+
@@ -224,6 +226,19 @@ a<-ggplot() +
   scale_fill_gradient2( midpoint = mean(count),low = "red", mid = "white",
                         high = "blue") +
   theme_opts
+}
+
+
+
+
+v<-datos%>%filter(datos$Tipo_de_siniestro == "ATROPELLO DE ANIMALES" & Gravedad == "FATAL")%>%group_by(Departamento)%>%summarise( n=n() )
+count<-datos%>%group_by(Departamento)%>%summarise(n=n())%>%mutate(n=(n/pob)*100)
+pob<-c(73378,520187,84698,123203,57088,25050,67048,58815,164300,1319108,113124,54765,103493,68088,124878,108309,82595,90053,48134)
+  
+mapa()
+
+
+
 
 
 ##Las 8 opciones de filtro posibles

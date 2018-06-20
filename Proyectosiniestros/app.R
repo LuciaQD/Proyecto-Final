@@ -6,9 +6,10 @@ library(maptools)
 library(broom)
 library(ggmosaic)
 library(lubridate)
+library(shinythemes)
 
-ui <- fluidPage(
-  titlePanel("Siniestros en el periodo 2013-2017"),
+ui <- fluidPage(theme = shinytheme("sandstone"),
+  titlePanel("Siniestros de tránsito en Uruguay"),
   tabsetPanel(
     #Panel de introduccion
     tabPanel("Introducción",
@@ -17,7 +18,7 @@ ui <- fluidPage(
              p("Hola2")
              ),
     #Panel de analisis exploratorio
-    tabPanel("Analisis Exploratorio",
+    tabPanel("Análisis Exploratorio",
              #Layout de sidebar y main
              sidebarLayout(
                
@@ -60,39 +61,33 @@ ui <- fluidPage(
                                                                     "2016",
                                                                     "2017")),
                  selectInput("selects","Tipo de siniestro",choices = c("Todos",
-                                                                    "Colisión entre vehiculos",
-                                                                    "Caída",
-                                                                    "DESPISTE",
-                                                                    "Atropello de peaton",
-                                                                    "Atropello de animales",
-                                                                    "Colision con obstaculo en calzada")),
+                                                                    "Colisión entre vehiculos"="COLISIÓN ENTRE VEHÍCULOS",
+                                                                    "Caída"="CAÍDA",
+                                                                    "Despiste"="DESPISTE",
+                                                                    "Atropello de peaton"="ATROPELLO DE PEATÓN",
+                                                                    "Atropello de animales"="ATROPELLO DE ANIMALES",
+                                                                    "Colision con obstaculo en calzada"="COLISIÓN CON OBSTÁCULO EN CALZADA")),
                  selectInput("selecgrav","Gravedad del siniestro",choices = c("Todas",
-                                                                    "Fatal",
-                                                                    "Grave",
-                                                                    "Leve",
-                                                                    "Sin lesionados"))
+                                                                    "Fatal"="FATAL",
+                                                                    "Grave"="GRAVE",
+                                                                    "Leve"="LEVE",
+                                                                    "Sin lesionados"="SIN LESIONADOS"))
                  
                ),
                mainPanel(
-                 plotOutput("mapa")
+                 plotOutput("mapa"),
+                 em("Se muestra la cantidad de siniestros cada 100 habitantes en un escala de color en torno a la media.")
                )#Main
              )#Layout
-             ),#Panel
-    tabPanel("Predicción")
+             )#Panel
+    
   )#Tabset
   
 )#Fluid
  
 server <- function(input, output) {
   
-  #Intento de cambio de año
-   # v<-reactive({
-   #   switch (input$seleccion,
-   #     "Departamento" = Departamento,
-   #     "Gravedad" = Gravedad
-   #   )
-   # })
-  
+  ###Añadir base
   
     output$grafico<-renderPlot(
       if(input$selaño != "Todos"){
@@ -100,143 +95,126 @@ server <- function(input, output) {
         if(input$seleccion=="Gravedad")
         {ggplot(z,aes(x = Gravedad)) + 
         geom_bar(fill="seagreen4") +
-        labs(x = "v", y = "Cantidad")}
+        labs(x = "Gravedad", y = "Cantidad") + 
+        ggtitle("Gravedad de los siniestros")}
         else if(input$seleccion=="Departamento")
-        {ggplot(z,aes(x = Departamento)) + 
+        {ggplot(z,aes(x = fct_infreq(Departamento))) + 
             geom_bar(fill="seagreen4") +
             labs(x = "Departamento", y = "Cantidad") +
-            coord_flip()}
+            coord_flip() + 
+            ggtitle("Siniestros por departamento")}
         else if(input$seleccion=="Tipo de siniestro")
-        {ggplot(z,aes(x = Tipo_de_siniestro)) + 
+        {ggplot(z,aes(x = fct_infreq(Tipo_de_siniestro))) + 
             geom_bar(fill="seagreen4") +
             labs(x = "Tipo de siniestro", y = "Cantidad") + 
-            coord_flip()}
+            coord_flip() + 
+            ggtitle("Tipo de siniestro")}
         else if(input$seleccion=="Mes")
-        {ggplot(z,aes(x = Mes)) + 
-            geom_bar(fill="seagreen4") +
+        {z%>%
+            group_by(Mes, Año) %>%
+            summarize(n = n()) %>%
+            ggplot(aes(Mes, n)) +
+            geom_line(size = 1 , color = "seagreen4") +
             scale_x_continuous(breaks = seq(1,12,1), 
                                labels = c("Enero", "Febrero", "Marzo", "Abril","Mayo", "Junio", "Julio", "Agosto", "Setiembre", "Octubre", "Noviembre", "Diciembre")) +
-            labs(x = "Mes", y = "Cantidad")}
+            labs(x = "Mes", y = "Cantidad") + 
+            ggtitle("Siniestros por mes")}
         else if(input$seleccion=="Dia de la semana")
-        {ggplot(z,aes(x = Dia_semana)) + 
-            geom_bar(fill="seagreen4") +
-            labs(x = "Dia de la semana", y = "Cantidad")}
+        {z %>%
+            mutate(Dia_semana = wday(Fecha, label = TRUE)) %>%
+            group_by(Dia_semana) %>%
+            summarise(Cantidad = n()) %>%
+            ggplot(aes(x = Dia_semana, y = Cantidad)) + 
+            geom_point(size = 4 ,color = "seagreen4") + 
+            scale_x_discrete(labels = c("DOMINGO", "LUNES", "MARTES", "MIÉRCOLES", "JUEVES","VIERNES", "SÁBADO" )) +
+            labs(x = "Día de la semana", y = "Cantidad") + 
+            ggtitle("Siniestros por dia de la semana")
+        }
         else if(input$seleccion=="Hora")
         {ggplot(z,aes(x = Hora)) + 
             geom_bar(fill="seagreen4") +
             scale_x_continuous(breaks = seq(0,23,1)) +
-            labs(x = "Hora", y = "Cantidad")}
+            labs(x = "Hora", y = "Cantidad") + 
+            ggtitle("Siniestros por hora")}
       }
       else{
         if(input$seleccion=="Gravedad")
         {datos%>%ggplot(aes(x = Gravedad)) + 
-          geom_bar() +
-          labs(x = "Gravedad del siniestro", y = "Cantidad")}
+          geom_bar(fill="seagreen4") +
+          labs(x = "Gravedad", y = "Cantidad") + 
+          ggtitle("Gravedad de los siniestros")}
         else if(input$seleccion=="Departamento")
-        {datos%>%ggplot(aes(x = Departamento)) + 
-            geom_bar() +
-            labs(x = "Departamento", y = "Cantidad")}
-        else if(input$seleccion=="Tipo de siniestro")
-        {datos%>%ggplot(aes(x = Tipo_de_siniestro)) + 
-            geom_bar() +
-            labs(x = "Tipo de siniestro", y = "Cantidad")}
-        else if(input$seleccion=="Mes")
-        {datos%>%ggplot(aes(x = Mes)) + 
+        {datos%>%ggplot(aes(x = fct_infreq(Departamento))) + 
             geom_bar(fill="seagreen4") +
+            labs(x = "Departamento", y = "Cantidad") + 
+            coord_flip() + 
+            ggtitle("Siniestros por departamento")}
+        else if(input$seleccion=="Tipo de siniestro")
+        {datos%>%ggplot(aes(x = fct_infreq(Tipo_de_siniestro))) + 
+            geom_bar(fill="seagreen4") +
+            labs(x = "Tipo de siniestro", y = "Cantidad") +
+            coord_flip() + 
+            ggtitle("Tipo de siniestro")}
+        else if(input$seleccion=="Mes")
+        {datos %>%
+            group_by(Mes, Año) %>%
+            summarize(n = n()) %>%
+            ggplot(aes(Mes, n, color = factor(Año))) +
+            geom_line(size = 1) +
             scale_x_continuous(breaks = seq(1,12,1), 
                                labels = c("Enero", "Febrero", "Marzo", "Abril","Mayo", "Junio", "Julio", "Agosto", "Setiembre", "Octubre", "Noviembre", "Diciembre")) +
-            labs(x = "Mes", y = "Cantidad")}
+            labs(x = "Mes", y = "Cantidad", color = "Año") + 
+            ggtitle("Siniestros por mes")}
         else if(input$seleccion=="Dia de la semana")
-        {datos%>%ggplot(aes(x = Dia_semana)) + 
-            geom_bar(fill="seagreen4") +
-            labs(x = "Dia de la semana", y = "Cantidad")}
+        {datos %>%
+            mutate(Dia_semana = wday(Fecha, label = TRUE)) %>%
+            group_by(Dia_semana) %>%
+            summarise(Cantidad = n()) %>%
+            ggplot(aes(x = Dia_semana, y = Cantidad)) + 
+            geom_point(size = 4 ,color = "seagreen4") + 
+            scale_x_discrete(labels = c("DOMINGO", "LUNES", "MARTES", "MIÉRCOLES", "JUEVES","VIERNES", "SÁBADO" )) +
+            labs(x = "Día de la semana", y = "Cantidad") + 
+            ggtitle("Siniestros por dia de la semana")
+        }
         else if(input$seleccion=="Hora")
         {datos%>%ggplot(aes(x = Hora)) + 
-            geom_bar() +
+            geom_bar(fill = "seagreen4") +
             scale_x_continuous(breaks = seq(0,23,1)) +
-            labs(x = "Hora", y = "Cantidad")}
+            labs(x = "Hora", y = "Cantidad") + 
+            ggtitle("Siniestros por hora")}
       }
         
     )
+    x<-reactive({input$selecanual})
+    y<-reactive({input$selects})
+    z<-reactive({input$selecgrav})
+    pob<-c(73378,520187,84698,123203,57088,25050,67048,58815,164300,1319108,113124,54765,103493,68088,124878,108309,82595,90053,48134)
+    source("mapa.R")
+    
   output$mapa<-renderPlot(
-    if(input$selecanual == "Todos" & input$selects == "Todos" & input$selecgrav == "Todas"){
-    count<-datos%>%group_by(Departamento)%>%summarise(n=n())
-    count<-count$n
-    uruguay <- getData("GADM", country = "UY", level = 0)
-    uruguay_states <- getData("GADM", country = "UY", level = 1)
-    uystates_UTM <-spTransform(uruguay_states, CRS("+init=EPSG:5383")) 
-    NAME_1 <- uystates_UTM@data$NAME_1
-    count_df <- data.frame(NAME_1, count)
-    uystates_UTM@data$id <- rownames(uystates_UTM@data)
-    uystates_UTM@data <- plyr::join(uystates_UTM@data, count_df, by="NAME_1")
-    uystates_df <- tidy(uystates_UTM)
-    uystates_df <- plyr::join(uystates_df,uystates_UTM@data, by="id")
-    uystates_df <-uystates_df %>% filter(!(NAME_1=="Rivera"& lat<6400000)) #un error en el mapa que hay que sacar
-    theme_opts <- list(theme(panel.grid.minor = element_blank(),
-                             panel.grid.major = element_blank(),
-                             panel.background = element_blank(),
-                             plot.background = element_blank(),
-                             axis.line = element_blank(),
-                             axis.text.x = element_blank(),
-                             axis.text.y = element_blank(),
-                             axis.ticks = element_blank(),
-                             axis.title.x = element_blank(),
-                             axis.title.y = element_blank(),
-                             plot.title = element_blank()))
-    
-    countunique <-uystates_df %>%
-      group_by(NAME_1) %>%
-      summarise(mlong = mean(long), mlat = mean(lat))
-    ggplot() +
-      geom_polygon(data = uystates_df, aes(x = long, y = lat, group = group, fill =
-                                             count), color = "black", size = 0.25) +
-      geom_text(data =countunique ,aes(label = round(count,2), x = mlong, y = mlat))+
-      theme(aspect.ratio = 1) + labs(fill = "Cantidad")+
-      scale_fill_gradient2( midpoint = mean(count),low = "red", mid = "white",
-                            high = "blue") +
-      theme_opts
-  
-    }
-    else if(input$selecanual == "Todos" & input$selects != "Todos" & input$selecgrav == "Todas"){
-    count<-datos%>%filter(Tipo_de_siniestro==input$selects)%>%group_by(Departamento)%>%summarise(n=n())    
-    count<-count$n
-    uruguay <- getData("GADM", country = "UY", level = 0)
-    uruguay_states <- getData("GADM", country = "UY", level = 1)
-    uystates_UTM <-spTransform(uruguay_states, CRS("+init=EPSG:5383")) 
-    NAME_1 <- uystates_UTM@data$NAME_1
-    count_df <- data.frame(NAME_1, count)
-    uystates_UTM@data$id <- rownames(uystates_UTM@data)
-    uystates_UTM@data <- plyr::join(uystates_UTM@data, count_df, by="NAME_1")
-    uystates_df <- tidy(uystates_UTM)
-    uystates_df <- plyr::join(uystates_df,uystates_UTM@data, by="id")
-    uystates_df <-uystates_df %>% filter(!(NAME_1=="Rivera"& lat<6400000)) #un error en el mapa que hay que sacar
-    theme_opts <- list(theme(panel.grid.minor = element_blank(),
-                             panel.grid.major = element_blank(),
-                             panel.background = element_blank(),
-                             plot.background = element_blank(),
-                             axis.line = element_blank(),
-                             axis.text.x = element_blank(),
-                             axis.text.y = element_blank(),
-                             axis.ticks = element_blank(),
-                             axis.title.x = element_blank(),
-                             axis.title.y = element_blank(),
-                             plot.title = element_blank()))
-    
-    countunique <-uystates_df %>%
-      group_by(NAME_1) %>%
-      summarise(mlong = mean(long), mlat = mean(lat))
-    ggplot() +
-      geom_polygon(data = uystates_df, aes(x = long, y = lat, group = group, fill =
-                                             count), color = "black", size = 0.25) +
-      geom_text(data =countunique ,aes(label = round(count,2), x = mlong, y = mlat))+
-      theme(aspect.ratio = 1) + labs(fill = "Cantidad")+
-      scale_fill_gradient2( midpoint = mean(count),low = "red", mid = "white",
-                            high = "blue") +
-      theme_opts}
-    # else if(input$selecanual == "Todos" & input$selects != "Todos" & input$selecgrav != "Todos"){count<-datos%>%filter(Gravedad==input$selecgrav & Tipo_de_siniestro==input$selects)%>%group_by(Departamento)%>%summarise(n=n())}
-    # else if(input$selecanual != "Todos" & input$selects == "Todos" & input$selecgrav != "Todos"){count<-datos%>%filter(Gravedad==input$selecgrav & Año==input$selecanual)%>%group_by(Departamento)%>%summarise(n=n())}
-    # else if(input$selecanual != "Todos" & input$selects != "Todos" & input$selecgrav == "Todos"){count<-datos%>%filter(Año==input$selecanual & Tipo_de_siniestro==input$selects)%>%group_by(Departamento)%>%summarise(n=n())}
-    # else if(input$selecanual != "Todos" & input$selects != "Todos" & input$selecgrav != "Todos"){count<-datos%>%filter(Año==input$selecanual & Gravedad==input$selecgrav & Tipo_de_siniestro==input$selects)%>%group_by(Departamento)%>%summarise(n=n())}
+    if(x() == "Todos" & y() == "Todos" & z() == "Todas"){count<-datos%>%group_by(Departamento)%>%summarise(n=n())%>%mutate(n=(n/pob)*100)
+    mapa(count)}
+    else if(x() == "Todos" & y() != "Todos" & z() == "Todas"){
+    count<-datos%>%filter(Tipo_de_siniestro==input$selects)%>%group_by(Departamento)%>%summarise(n=n())%>%mutate(n=(n/pob)*100)    
+    mapa(count)}
+    else if(x() != "Todos" & y() == "Todos" & z() == "Todas"){
+    count<-datos%>%filter(Año == input$selecanual)%>%group_by(Departamento)%>%summarise(n=n())%>%mutate(n=(n/pob)*100)    
+    mapa(count)}
+    else if(x() == "Todos" & y() == "Todos" & z() != "Todas"){
+    count<-datos%>%filter(Gravedad == input$selecgrav)%>%group_by(Departamento)%>%summarise(n=n())%>%mutate(n=(n/pob)*100)    
+    mapa(count)}
+    else if(x() == "Todos" & y() != "Todos" & z() != "Todas"){
+    count<-datos%>%filter(Tipo_de_siniestro == input$selects & Gravedad == input$selecgrav)%>%group_by(Departamento)%>%summarise(n=n())%>%mutate(n=(n/pob)*100)
+    mapa(count)}
+    else if(x() != "Todos" & y() == "Todos" & z() != "Todas"){
+    count<-datos%>%filter(Gravedad == input$selecgrav & Año == input$selecanual)%>%group_by(Departamento)%>%summarise(n=n())%>%mutate(n=(n/pob)*100)
+    mapa(count)}
+    else if(x() != "Todos" & y() != "Todos" & z() == "Todas"){
+    count<-datos%>%filter(Año == input$selecanual & Tipo_de_siniestro == input$selects)%>%group_by(Departamento)%>%summarise(n=n())%>%mutate(n=(n/pob)*100)
+    mapa(count)}
+    else if(x() != "Todos" & y() != "Todos" & z() != "Todas"){
+    count<-datos%>%filter(Año == input$selecanual & Gravedad == input$selecgrav & Tipo_de_siniestro == input$selects)%>%group_by(Departamento)%>%summarise(n=n())%>%mutate(n=(n/pob)*100)
+    mapa(count)}
   )
    
     
