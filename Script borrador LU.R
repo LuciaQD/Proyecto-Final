@@ -236,6 +236,7 @@ else if(input$selecanual != "Todos" & input$selects == "Todos" & input$selecgrav
 else if(input$selecanual != "Todos" & input$selects != "Todos" & input$selecgrav == "Todos"){count<-datos%>%filter(Año==input$selecanual & Tipo_de_siniestro==input$selects)%>%group_by(Departamento)%>%summarise(n=n())}
 else if(input$selecanual != "Todos" & input$selects != "Todos" & input$selecgrav != "Todos"){count<-datos%>%filter(Año==input$selecanual & Gravedad==input$selecgrav & Tipo_de_siniestro==input$selects)%>%group_by(Departamento)%>%summarise(n=n())}
 
+<<<<<<< HEAD
 # if(input$selecanual == "Todos" & input$selects == "Todos" & input$selecgrav == "Todos"){count<-datos%>%group_by(Departamento)%>%summarise(n=n())}
 # else if(input$selecanual == "Todos" & input$selects != "Todos" & input$selecgrav == "Todos"){count<-datos%>%filter(Tipo_de_siniestro==input$selects)%>%group_by(Departamento)%>%summarise(n=n())
 # count<-count$n
@@ -272,3 +273,6 @@ else if(input$selecanual != "Todos" & input$selects != "Todos" & input$selecgrav
 #   scale_fill_gradient2( midpoint = mean(count),low = "red", mid = "white",
 #                         high = "blue") +
 #   theme_opts}
+=======
+
+>>>>>>> e132e35a925f1d682fdb2affccfbe3ca2616b4d7
