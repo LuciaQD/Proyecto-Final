@@ -30,8 +30,8 @@ mapa<- function(count) {
                                            count), color = "black", size = 0.25) +
     geom_text(data =countunique ,aes(label = round(count,2), x = mlong, y = mlat))+
     theme(aspect.ratio = 1) + labs(fill = "Siniestros/100hab")+
-    scale_fill_gradient2( midpoint = mean(count),low = "red", mid = "white",
-                          high = "blue") +
+    scale_fill_gradient2( midpoint = mean(count),low = "blue", mid = "white",
+                          high = "red") +
     ggtitle("Mapa de Uruguay") +
     theme_opts
 }

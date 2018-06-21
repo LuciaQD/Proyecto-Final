@@ -50,7 +50,28 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
              )#Layout
              ),#Panel
     
-    tabPanel("Variables cruzadas"),
+    tabPanel("Variables cruzadas",
+             sidebarLayout(
+              sidebarPanel(
+                selectInput("choice1","Elige primer variable",
+                            choices = c("Tipo de siniestro",
+                                        "Gravedad",
+                                        "Departamento"
+                            )),
+                selectInput("choice2","Elige segunda variable",
+                            choices = c("Tipo de siniestro",
+                                        "Gravedad")),
+                radioButtons("añoboton", label = h3("Año"),
+                             choices = list("2013", "2014", "2015","2016","2017","Todos"), 
+                             selected = "Todos")
+                
+                            
+                
+              ),
+              mainPanel(
+                plotOutput("cruzadas")
+              )
+             )),
     tabPanel("Mapa",
              sidebarLayout(
                sidebarPanel(
@@ -122,10 +143,8 @@ server <- function(input, output) {
         else if(input$seleccion=="Dia de la semana")
         {z %>%
             mutate(Dia_semana = wday(Fecha, label = TRUE)) %>%
-            group_by(Dia_semana) %>%
-            summarise(Cantidad = n()) %>%
-            ggplot(aes(x = Dia_semana, y = Cantidad)) + 
-            geom_point(size = 4 ,color = "seagreen4") + 
+            ggplot(aes(x = Dia_semana)) + 
+            geom_bar(color = "seagreen4") + 
             scale_x_discrete(labels = c("DOMINGO", "LUNES", "MARTES", "MIÉRCOLES", "JUEVES","VIERNES", "SÁBADO" )) +
             labs(x = "Día de la semana", y = "Cantidad") + 
             ggtitle("Siniestros por dia de la semana")
@@ -168,10 +187,8 @@ server <- function(input, output) {
         else if(input$seleccion=="Dia de la semana")
         {datos %>%
             mutate(Dia_semana = wday(Fecha, label = TRUE)) %>%
-            group_by(Dia_semana) %>%
-            summarise(Cantidad = n()) %>%
-            ggplot(aes(x = Dia_semana, y = Cantidad)) + 
-            geom_point(size = 4 ,color = "seagreen4") + 
+            ggplot(aes(x = Dia_semana)) + 
+            geom_bar(color = "seagreen4") + 
             scale_x_discrete(labels = c("DOMINGO", "LUNES", "MARTES", "MIÉRCOLES", "JUEVES","VIERNES", "SÁBADO" )) +
             labs(x = "Día de la semana", y = "Cantidad") + 
             ggtitle("Siniestros por dia de la semana")
@@ -191,6 +208,15 @@ server <- function(input, output) {
     pob<-c(73378,520187,84698,123203,57088,25050,67048,58815,164300,1319108,113124,54765,103493,68088,124878,108309,82595,90053,48134)
     source("mapa.R")
     
+  
+    # output$cruzadas<-renderPlot(
+    #   if(input$añoboton != "Todos"){
+    #     q<-(datos%>%filter(Año==input$selaño))
+    #     if())
+    #   }
+    # )
+    
+      
   output$mapa<-renderPlot(
     if(x() == "Todos" & y() == "Todos" & z() == "Todas"){count<-datos%>%group_by(Departamento)%>%summarise(n=n())%>%mutate(n=(n/pob)*100)
     mapa(count)}

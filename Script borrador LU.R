@@ -86,6 +86,7 @@ datos %>%
 
 # Siniestros por d?a de la semana en todos los a?os
 datos %>%
+  mutate(Dia_semana = wday(Fecha, label = TRUE)) %>%
   ggplot(aes(x = Dia_semana)) + 
   geom_bar() + 
   labs(x = "D?a de la semana", y = "Cantidad") # ver sise puedo mostrar la semana ordenada
@@ -133,6 +134,13 @@ datos %>%
 # Departamento y gravedad en todos los a?os
 datos %>%
   ggplot(aes(x = Departamento, fill = Gravedad)) + 
+  geom_bar(position = "fill") +
+  coord_flip() +
+  labs(x = "Departamento", y = "Frecuencia")
+
+# Departamento y tipo de siniestro en todos los a?os
+datos %>%
+  ggplot(aes(x = Departamento, fill = Tipo_de_siniestro)) + 
   geom_bar(position = "fill") +
   coord_flip() +
   labs(x = "Departamento", y = "Frecuencia")
@@ -235,6 +243,9 @@ v<-datos%>%filter(datos$Tipo_de_siniestro == "ATROPELLO DE ANIMALES" & Gravedad 
 count<-datos%>%group_by(Departamento)%>%summarise(n=n())%>%mutate(n=(n/pob)*100)
 pob<-c(73378,520187,84698,123203,57088,25050,67048,58815,164300,1319108,113124,54765,103493,68088,124878,108309,82595,90053,48134)
   
+
+dep<-c("ARTIGAS","CANELONES","CERRO LARGO","COLONIA","DURAZNO","FLORES","FLORIDA","LAVALLEJA","MALDONADO","MONTEVIDEO","PAYSANDU","RIO NEGRO","RIVERA","ROCHA","SALTO","SAN JOSE","SORIANO","TACUAREMBO","TREINTA Y TRES")
+
 mapa()
 
 
@@ -288,6 +299,10 @@ else if(input$selecanual != "Todos" & input$selects != "Todos" & input$selecgrav
 #   scale_fill_gradient2( midpoint = mean(count),low = "red", mid = "white",
 #                         high = "blue") +
 #   theme_opts}
-=======
 
->>>>>>> e132e35a925f1d682fdb2affccfbe3ca2616b4d7
+
+
+
+#####Variables cruzadas
+
+
