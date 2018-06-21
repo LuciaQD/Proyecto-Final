@@ -217,68 +217,89 @@ Analisis por tipo de siniestro y gravedad de los mismos, vamos a cruzar estas va
 
 Tipos de siniestros en los distintos años
 
-```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = cap5, fig.width = 6, fig.height = 4}
+```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = cap7, fig.width = 6, fig.height = 4}
 
 datos %>%
   ggplot(aes(x = fct_infreq(Tipo_de_siniestro))) + 
   geom_bar(fill = "seagreen4") +
   coord_flip() +
   facet_wrap(~ Año) +
-  labs(x = "Tipo de siniestro", y = "Cantidad") 
+  labs(x = "Tipo de siniestro", y = "Cantidad") +
+  ggtitle("Tipo de siniestros")
 
-cap5 <- ""
+cap7 <- ""
 
 ```
 
 Gravedad de los siniestros por año
-```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = cap6, fig.width = 6, fig.height = 4}
+```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = cap8, fig.width = 6, fig.height = 4}
 
 datos %>%
   ggplot(aes(x = Gravedad)) + 
   geom_bar(fill = "seagreen4") +
   facet_wrap(~ Año) +
-  labs(x = "Gravedad del siniestro", y = "Cantidad")
+  labs(x = "Gravedad del siniestro", y = "Cantidad") +
+  ggtitle("Gravedad de los siniestros")
 
-cap6 <- ""
+cap8 <- ""
 
 ```
 
-gravedad y tupo de siniestros ( la idea es hacer mosaico pero no funciona)
+gravedad y tipo de siniestros 
 
-```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = cap7, fig.width = 6, fig.height = 4}
+```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = cap9, fig.width = 6, fig.height = 4}
 
 datos %>%
   ggplot(aes(x = Tipo_de_siniestro, fill = Gravedad)) + 
   geom_bar(position = "fill") + 
   coord_flip() +
   facet_wrap(~ Año) +
-  labs(x = "Tipo de siniestro", y = "Fracuencia") 
+  theme(legend.position = "bottom") +
+  labs(x = "Tipo de siniestro", y = "Fracuencia") +
+  ggtitle("Gravedad por tipo de siniestro")
 
-cap7 <- ""
+cap9 <- ""
 
 ```
 
 gravedad por dia de la semana
 
-```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = cap8, fig.width = 6, fig.height = 4}
+```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = cap10, fig.width = 6, fig.height = 4}
 
 datos %>%
   mutate(Dia_semana = wday(Fecha, label = TRUE)) %>%
   ggplot(aes(x = factor(Dia_semana), fill = Gravedad)) + 
   geom_bar(position = "fill") + 
   facet_wrap(~ Año) +
+  theme(legend.position = "bottom") +
   scale_x_discrete(labels = c("DOMINGO", "LUNES", "MARTES", "MIÉRCOLES", "JUEVES","VIERNES", "SÁBADO" )) +
-  labs(x = "Día de la semana", y = "Cantidad")
+  labs(x = "Día de la semana", y = "Cantidad") +
+  ggtitle("Gravedad por día de la semana")
 
-cap8 <- ""
+cap10 <- ""
 
 ```
-
+ Ver si poneos alguno más de gravedad y TS
+ 
+ Análisis por departamento.
+ 
+ Cantidad de siniestros por departamento
+ 
+ Tipo de siniestro por departamento
+ 
+ Gravedad por departamento
+ 
+ Haceos algo temporal por  departamento?
 
 
 ## Aplicación Shiny
 
+Acá hay que explicar que hay en la shiny
+
+
 ## Comentarios finales
+
+
 
 ## Bibliografía
 
