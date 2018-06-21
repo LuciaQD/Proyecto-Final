@@ -237,14 +237,15 @@ ggplot() +
 }
 
 
-
-
-v<-datos%>%filter(datos$Tipo_de_siniestro == "ATROPELLO DE ANIMALES" & Gravedad == "FATAL")%>%group_by(Departamento)%>%summarise( n=n() )
-count<-datos%>%group_by(Departamento)%>%summarise(n=n())%>%mutate(n=(n/pob)*100)
 pob<-c(73378,520187,84698,123203,57088,25050,67048,58815,164300,1319108,113124,54765,103493,68088,124878,108309,82595,90053,48134)
+Departamento <- c("ARTIGAS","CANELONES","CERRO LARGO","COLONIA","DURAZNO","FLORES","FLORIDA","LAVALLEJA","MALDONADO","MONTEVIDEO","PAYSANDU","RIO NEGRO","RIVERA","ROCHA","SALTO","SAN JOSE","SORIANO","TACUAREMBO","TREINTA Y TRES")
+dep <- as.data.frame(Departamento)
+
+
+v<-datos%>%filter(datos$Tipo_de_siniestro == "ATROPELLO DE ANIMALES" & Gravedad == "FATAL")%>%group_by(Departamento)%>%summarise( n=n() )%>%right_join(dep)
+count<-datos%>%group_by(Departamento)%>%summarise(n=n())%>%mutate(n=(n/pob)*100)
   
 
-dep<-c("ARTIGAS","CANELONES","CERRO LARGO","COLONIA","DURAZNO","FLORES","FLORIDA","LAVALLEJA","MALDONADO","MONTEVIDEO","PAYSANDU","RIO NEGRO","RIVERA","ROCHA","SALTO","SAN JOSE","SORIANO","TACUAREMBO","TREINTA Y TRES")
 
 mapa()
 
