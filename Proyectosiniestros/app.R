@@ -356,7 +356,7 @@ server <- function(input, output) {
     else if(x() == "Todos" & y() == "Todos" & z() != "Todas"){
       count<- datos %>%
         filter(Gravedad == input$selecgrav) %>%
-        group_by(Departamento) %>%filter()
+        group_by(Departamento) %>%
       summarise( n=n() ) %>%
         right_join(dep) %>%
         mutate(n = as.numeric(as.character(n))) %>%
