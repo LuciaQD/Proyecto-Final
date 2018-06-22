@@ -202,47 +202,204 @@ server <- function(input, output) {
       }
         
     )
+    
     x<-reactive({input$selecanual})
     y<-reactive({input$selects})
     z<-reactive({input$selecgrav})
     pob<-c(73378,520187,84698,123203,57088,25050,67048,58815,164300,1319108,113124,54765,103493,68088,124878,108309,82595,90053,48134)
     source("mapa.R")
+    ch1<-reactive({input$choice1})
+    ch2<-reactive({input$choice2})
+    añ<-reactive({input$añoboton})
+    Departamento <- c("ARTIGAS","CANELONES","CERRO LARGO","COLONIA","DURAZNO","FLORES","FLORIDA","LAVALLEJA","MALDONADO","MONTEVIDEO","PAYSANDU","RIO NEGRO","RIVERA","ROCHA","SALTO","SAN JOSE","SORIANO","TACUAREMBO","TREINTA Y TRES")
+    dep <- as.data.frame(Departamento)
     
   
-    # output$cruzadas<-renderPlot(
-    #   if(input$añoboton != "Todos"){
-    #     q<-(datos%>%filter(Año==input$selaño))
-    #     if())
-    #   }
-    # )
+    output$cruzadas<-renderPlot(
+      if(input$añoboton != "Todos"){
+        q<-(datos%>%filter(Año==input$añoboton))
+        if(ch1() != "Departamento"){
+          if(input$choice1 == "Tipo de siniestro" & input$choice2 == "Gravedad"){
+            q%>%filter(Tipo_de_siniestro != 'SIN DATOS')%>%
+              ggplot(aes(x = Tipo_de_siniestro, fill = Gravedad)) + 
+              geom_bar(position = "fill") + 
+              scale_color_brewer(palette = "Dark2") +
+              coord_flip() +
+              labs(x = "Tipo de siniestro", y = "Fracuencia") +
+              ggtitle("Tipo de siniestro segun gravedad")}
+          else if(input$choice1 == "Gravedad" & input$choice2 == "Tipo de siniestro"){
+            q%>%filter(Tipo_de_siniestro != 'SIN DATOS')%>%
+              ggplot(aes(x =Gravedad , fill =  Tipo_de_siniestro)) + 
+              geom_bar(position = "fill") + 
+              scale_color_brewer(palette = "Dark2") +
+              coord_flip() +
+              labs(x = "Gravedad", y = "Fracuencia") +
+              ggtitle("Gravedad segun tipo de siniestro")}
+          else if(input$choice1 == "Tipo de siniestro" & input$choice2 == "Tipo de siniestro"){
+            q%>%filter(Tipo_de_siniestro != 'SIN DATOS')%>%
+            ggplot(aes(x = fct_infreq(Tipo_de_siniestro))) + 
+              geom_bar(fill="seagreen4") +
+              labs(x = "Tipo de siniestro", y = "Cantidad") + 
+              coord_flip() + 
+              ggtitle("Tipo de siniestro")
+          }
+          else if(input$choice1 == "Gravedad" & input$choice2 == "Gravedad"){
+          q%>%filter(Tipo_de_siniestro != 'SIN DATOS')%>%
+            ggplot(aes(x = fct_infreq(Gravedad))) + 
+            geom_bar(fill="seagreen4") +
+            labs(x = "Gravedad", y = "Cantidad") + 
+            coord_flip() + 
+            ggtitle("Gravedad")
+          }
+        }#If de no departamento
+        else if(input$choice1 == "Departamento"){
+          if(input$choice2 == "Tipo de siniestro"){
+            q%>%filter(Tipo_de_siniestro != 'SIN DATOS')%>%
+            ggplot(aes(x = Departamento, fill = Tipo_de_siniestro)) + 
+              geom_bar(position = "fill") +
+              scale_color_brewer(palette = "Dark2") +
+              coord_flip() +
+              labs(x = "Departamento", y = "Frecuencia")
+          }
+          else if(input$choice2 == "Gravedad"){
+            q%>%ggplot(aes(x = Departamento, fill = Gravedad)) + 
+              geom_bar(position = "fill") +
+              scale_color_brewer(palette = "Dark2") +
+              coord_flip() +
+              labs(x = "Departamento", y = "Frecuencia")
+          }
+        }#If de si departamento
+          
+
+        
+
+      }#If de años
+      else if(input$añoboton == "Todos"){
+        q<-datos
+        if(ch1() != "Departamento"){
+          if(input$choice1 == "Tipo de siniestro" & input$choice2 == "Gravedad"){
+            q%>%filter(Tipo_de_siniestro != 'SIN DATOS')%>%
+              ggplot(aes(x = Tipo_de_siniestro, fill = Gravedad)) + 
+              geom_bar(position = "fill") + 
+              scale_color_brewer(palette = "Dark2") +
+              coord_flip() +
+              labs(x = "Tipo de siniestro", y = "Fracuencia") +
+              ggtitle("Tipo de siniestro segun gravedad")}
+          else if(input$choice1 == "Gravedad" & input$choice2 == "Tipo de siniestro"){
+            q%>%filter(Tipo_de_siniestro != 'SIN DATOS')%>%
+              ggplot(aes(x =Gravedad , fill =  Tipo_de_siniestro)) + 
+              geom_bar(position = "fill") + 
+              scale_color_brewer(palette = "Dark2") +
+              coord_flip() +
+              labs(x = "Gravedad", y = "Fracuencia") +
+              ggtitle("Gravedad segun tipo de siniestro")}
+          else if(input$choice1 == "Tipo de siniestro" & input$choice2 == "Tipo de siniestro"){
+            q%>%filter(Tipo_de_siniestro != 'SIN DATOS')%>%
+              ggplot(aes(x = fct_infreq(Tipo_de_siniestro))) + 
+              geom_bar(fill="seagreen4") +
+              labs(x = "Tipo de siniestro", y = "Cantidad") + 
+              coord_flip() + 
+              ggtitle("Tipo de siniestro")
+          }
+          else if(input$choice1 == "Gravedad" & input$choice2 == "Gravedad"){
+            q%>%filter(Tipo_de_siniestro != 'SIN DATOS')%>%
+              ggplot(aes(x = fct_infreq(Gravedad))) + 
+              geom_bar(fill="seagreen4") +
+              labs(x = "Gravedad", y = "Cantidad") + 
+              coord_flip() + 
+              ggtitle("Gravedad")
+          }
+        }#If de no departamento
+        else if(input$choice1 == "Departamento"){
+          if(input$choice2 == "Tipo de siniestro"){
+            q%>%filter(Tipo_de_siniestro != 'SIN DATOS')%>%
+              ggplot(aes(x = Departamento, fill = Tipo_de_siniestro)) + 
+              geom_bar(position = "fill") +
+              scale_color_brewer(palette = "Dark2") +
+              coord_flip() +
+              labs(x = "Departamento", y = "Frecuencia")
+          }
+          else if(input$choice2 == "Gravedad"){
+            q%>%ggplot(aes(x = Departamento, fill = Gravedad)) + 
+              geom_bar(position = "fill") +
+              scale_color_brewer(palette = "Dark2") +
+              coord_flip() +
+              labs(x = "Departamento", y = "Frecuencia")
+          }
+        }
+      }
+    )##Renderplot
+
     
       
   output$mapa<-renderPlot(
     if(x() == "Todos" & y() == "Todos" & z() == "Todas"){count<-datos%>%group_by(Departamento)%>%summarise(n=n())%>%mutate(n=(n/pob)*100)
     mapa(count)}
     else if(x() == "Todos" & y() != "Todos" & z() == "Todas"){
-    count<-datos%>%filter(Tipo_de_siniestro==input$selects)%>%group_by(Departamento)%>%summarise(n=n())%>%mutate(n=(n/pob)*100)    
-    mapa(count)}
+      count<- datos %>%
+        filter(Tipo_de_siniestro == input$selects) %>%
+        group_by(Departamento) %>%
+      summarise( n=n() ) %>%
+        right_join(dep) %>%
+        mutate(n = as.numeric(as.character(n))) %>%
+        mutate_if(is.numeric,coalesce,0)%>%mutate(n=(n/pob)*100)
+      mapa(count)}
     else if(x() != "Todos" & y() == "Todos" & z() == "Todas"){
-    count<-datos%>%filter(Año == input$selecanual)%>%group_by(Departamento)%>%summarise(n=n())%>%mutate(n=(n/pob)*100)    
-    mapa(count)}
+      count<- datos %>%
+        filter(Año == input$selecanual) %>%
+        group_by(Departamento) %>%
+      summarise( n=n() ) %>%
+        right_join(dep) %>%
+        mutate(n = as.numeric(as.character(n))) %>%
+        mutate_if(is.numeric,coalesce,0)%>%mutate(n=(n/pob)*100)
+      mapa(count)}
     else if(x() == "Todos" & y() == "Todos" & z() != "Todas"){
-    count<-datos%>%filter(Gravedad == input$selecgrav)%>%group_by(Departamento)%>%summarise(n=n())%>%mutate(n=(n/pob)*100)    
-    mapa(count)}
+      count<- datos %>%
+        filter(Gravedad == input$selecgrav) %>%
+        group_by(Departamento) %>%filter()
+      summarise( n=n() ) %>%
+        right_join(dep) %>%
+        mutate(n = as.numeric(as.character(n))) %>%
+        mutate_if(is.numeric,coalesce,0)%>%mutate(n=(n/pob)*100)
+      mapa(count)}
     else if(x() == "Todos" & y() != "Todos" & z() != "Todas"){
-    count<-datos%>%filter(Tipo_de_siniestro == input$selects & Gravedad == input$selecgrav)%>%group_by(Departamento)%>%summarise(n=n())%>%mutate(n=(n/pob)*100)
-    mapa(count)}
+      count<- datos %>%
+        filter(Tipo_de_siniestro == input$selects & Gravedad == input$selecgrav) %>%
+        group_by(Departamento) %>%
+      summarise( n=n() ) %>%
+        right_join(dep) %>%
+        mutate(n = as.numeric(as.character(n))) %>%
+        mutate_if(is.numeric,coalesce,0)%>%mutate(n=(n/pob)*100)
+      mapa(count)}
     else if(x() != "Todos" & y() == "Todos" & z() != "Todas"){
-    count<-datos%>%filter(Gravedad == input$selecgrav & Año == input$selecanual)%>%group_by(Departamento)%>%summarise(n=n())%>%mutate(n=(n/pob)*100)
-    mapa(count)}
+      count<- datos %>%
+        filter(Año == input$selecanual & Gravedad == input$selecgrav) %>%
+        group_by(Departamento) %>%
+      summarise( n=n() ) %>%
+        right_join(dep) %>%
+        mutate(n = as.numeric(as.character(n))) %>%
+        mutate_if(is.numeric,coalesce,0)%>%mutate(n=(n/pob)*100)
+      mapa(count)}
     else if(x() != "Todos" & y() != "Todos" & z() == "Todas"){
-    count<-datos%>%filter(Año == input$selecanual & Tipo_de_siniestro == input$selects)%>%group_by(Departamento)%>%summarise(n=n())%>%mutate(n=(n/pob)*100)
-    mapa(count)}
+      count<- datos %>%
+        filter(Año == input$selecanual & Tipo_de_siniestro == input$selects) %>%
+        group_by(Departamento) %>%
+      summarise( n=n() ) %>%
+        right_join(dep) %>%
+        mutate(n = as.numeric(as.character(n))) %>%
+        mutate_if(is.numeric,coalesce,0)%>%mutate(n=(n/pob)*100)
+      mapa(count)}
     else if(x() != "Todos" & y() != "Todos" & z() != "Todas"){
-    count<-datos%>%filter(Año == input$selecanual & Gravedad == input$selecgrav & Tipo_de_siniestro == input$selects)%>%group_by(Departamento)%>%summarise(n=n())%>%mutate(n=(n/pob)*100)
-    mapa(count)}
+      count<- datos %>%
+        filter(Año == input$selecanual & Tipo_de_siniestro == input$selects & Gravedad == input$selecgrav) %>%
+        group_by(Departamento) %>%
+      summarise( n=n() ) %>%
+        right_join(dep) %>%
+        mutate(n = as.numeric(as.character(n))) %>%
+        mutate_if(is.numeric,coalesce,0)%>%mutate(n=(n/pob)*100)
+      mapa(count)}
   )
-   
+
     
     
 }
