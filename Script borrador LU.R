@@ -127,14 +127,26 @@ datos %>%
   filter(Tipo_de_siniestro != 'SIN DATOS') %>%
   ggplot(aes(x = Tipo_de_siniestro, fill = Gravedad)) + 
   geom_bar(position = "fill") + 
+  scale_color_brewer(palette = "Dark2") +
   coord_flip() +
   labs(x = "Tipo de siniestro", y = "Fracuencia") 
+# theme(legend.position = "bottom", legend.title = element_text(face = "bold"))
+
+# Gravedad  y tipo de siniestro en todos los a?os
+datos %>%
+  filter(Tipo_de_siniestro != 'SIN DATOS') %>%
+  ggplot(aes(x = Gravedad, fill = Tipo_de_siniestro)) + 
+  geom_bar(position = "fill") + 
+  scale_color_brewer(palette = "Dark2") +
+  coord_flip() +
+  labs(x = "Gravedad", y = "Fracuencia") 
 # theme(legend.position = "bottom", legend.title = element_text(face = "bold"))
 
 # Departamento y gravedad en todos los a?os
 datos %>%
   ggplot(aes(x = Departamento, fill = Gravedad)) + 
   geom_bar(position = "fill") +
+  scale_color_brewer(palette = "Dark2") +
   coord_flip() +
   labs(x = "Departamento", y = "Frecuencia")
 
@@ -142,6 +154,7 @@ datos %>%
 datos %>%
   ggplot(aes(x = Departamento, fill = Tipo_de_siniestro)) + 
   geom_bar(position = "fill") +
+  scale_color_brewer(palette = "Dark2") +
   coord_flip() +
   labs(x = "Departamento", y = "Frecuencia")
 
@@ -242,15 +255,28 @@ Departamento <- c("ARTIGAS","CANELONES","CERRO LARGO","COLONIA","DURAZNO","FLORE
 dep <- as.data.frame(Departamento)
 
 
-v <- datos %>%
-  filter(datos$Tipo_de_siniestro == "ATROPELLO DE ANIMALES" & Gravedad == "FATAL") %>%
+count<- datos %>%
+  filter(Año=="2013" & datos$Tipo_de_siniestro == "ATROPELLO DE ANIMALES" & Gravedad == "FATAL") %>%
+  group_by(Departamento) %>%
+  summarise( n=n() ) %>%
+  right_join(dep) %>%
+  mutate(n = as.numeric(as.character(n))) %>%
+  mutate_if(is.numeric,coalesce,0)%>%mutate(n=(n/pob)*100)
+  mutate(n=(n/pob)*100)
+
+
+##
+
+count<- datos %>%
+  filter(Año == input$selecanual & Gravedad == input$selecgrav & Tipo_de_siniestro == input$selects) %>%
   group_by(Departamento) %>%
   summarise( n=n() ) %>%
   right_join(dep) %>%
   mutate(n = as.numeric(as.character(n))) %>%
   mutate_if(is.numeric,coalesce,0)
-count<-datos%>%group_by(Departamento)%>%summarise(n=n())%>%mutate(n=(n/pob)*100)
   
+  
+count<-datos%>%group_by(Departamento)%>%summarise(n=n())%>%mutate(n=(n/pob)*100)
 
 
 mapa()
@@ -312,4 +338,10 @@ else if(input$selecanual != "Todos" & input$selects != "Todos" & input$selecgrav
 
 #####Variables cruzadas
 
-
+q<-(datos%>%filter(Año=="2015"))
+q%>%filter(Tipo_de_siniestro != 'SIN DATOS')%>%
+  ggplot(aes(x = Tipo_de_siniestro, fill = Gravedad)) + 
+  geom_bar(position = "fill") + 
+  scale_color_brewer(palette = "Dark2") +
+  coord_flip() +
+  labs(x = "Tipo de siniestro", y = "Fracuencia")
