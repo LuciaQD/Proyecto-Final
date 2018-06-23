@@ -13,8 +13,14 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
   tabsetPanel(
     #Panel de introduccion
     tabPanel("Introducción",
-             p("Primera frase",br(),
-               "segunda frase"),
+             p("La seguridad vial en Uruguay siempre ha sido un tema de gran importancia....."
+               
+             ),
+             p("La presente aplicacion tiene como objetivo mostrar la influencia de ciertas variables
+               en la cantidad de siniestros de transito ocurridos en el periodo 2013-2017.",br(),
+               "La base que usamos para esto fue extraida de los datos abiertos de la Unidad Nacional de Seguridad Vial
+               juntando datos de los siniestros ocurridos en el periodo mencionado."
+               ),
              p("Hola2")
              ),
     #Panel de analisis exploratorio
