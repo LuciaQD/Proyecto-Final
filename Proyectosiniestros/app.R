@@ -12,7 +12,8 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
   titlePanel("Siniestros de tránsito en Uruguay"),
   tabsetPanel(
     #Panel de introduccion
-    tabPanel("Introducción",
+    tabPanel("Resumen",
+
              p("La seguridad vial en Uruguay siempre ha sido un tema de gran importancia....."
                
              ),
@@ -21,7 +22,13 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                "La base que usamos para esto fue extraida de los datos abiertos de la Unidad Nacional de Seguridad Vial
                juntando datos de los siniestros ocurridos en el periodo mencionado."
                ),
-             p("Hola2")
+             p("Hola2"),
+
+             br(),
+             p(h5("El siguiente trabajo se enmarca dentro de la materia Nuevas tecnologías para el análisis estadístico de datos de la carrera Licenciatura en Estadística.")),
+             p(h5("Para el mismo se elige trabajar con los datos de los siniestros de tránsito ocurridos en Uruguay en el período 2013-2017 obtenidos de la página web de la Unidad Nacional de Seguridad Vial (UNASEV) dado que el tema representa una problemática actual para la cual se busca generar información de interés para entender mejor las características de la siniestralidad del país.")),
+             p(h5("Fuente de los datos:", href = "http://aplicaciones.unasev.gub.uy/mapas/AdministracionMapaIndicadores/AdministracionMapaIndicadores_Alta"))
+
              ),
     #Panel de analisis exploratorio
     tabPanel("Análisis Exploratorio",
@@ -34,7 +41,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                         choices = c("Tipo de siniestro",
                                                     "Gravedad",
                                                     "Mes",
-                                                    "Dia de la semana",
+                                                    "Día de la semana",
                                                     "Hora",
                                                     "Departamento"
                                                     )
@@ -88,12 +95,12 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                                                                     "2016",
                                                                     "2017")),
                  selectInput("selects","Tipo de siniestro",choices = c("Todos",
-                                                                    "Colisión entre vehiculos"="COLISIÓN ENTRE VEHÍCULOS",
+                                                                    "Colisión entre vehículos"="COLISIÓN ENTRE VEHÍCULOS",
                                                                     "Caída"="CAÍDA",
                                                                     "Despiste"="DESPISTE",
-                                                                    "Atropello de peaton"="ATROPELLO DE PEATÓN",
+                                                                    "Atropello de peatón"="ATROPELLO DE PEATÓN",
                                                                     "Atropello de animales"="ATROPELLO DE ANIMALES",
-                                                                    "Colision con obstaculo en calzada"="COLISIÓN CON OBSTÁCULO EN CALZADA")),
+                                                                    "Colisión con obstáculo en calzada"="COLISIÓN CON OBSTÁCULO EN CALZADA")),
                  selectInput("selecgrav","Gravedad del siniestro",choices = c("Todas",
                                                                     "Fatal"="FATAL",
                                                                     "Grave"="GRAVE",
@@ -103,7 +110,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
                ),
                mainPanel(
                  plotOutput("mapa"),
-                 em("Se muestra la cantidad de siniestros cada 100 habitantes en un escala de color en torno a la media.")
+                 em("Se muestra la cantidad de siniestros cada 100 habitantes en un escala de color en torno a la media de las variables seleccionadas.")
                )#Main
              )#Layout
              )#Panel
@@ -114,97 +121,123 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
  
 server <- function(input, output) {
   
-  ###Añadir base
+  #source("cargadatos.R") no reconoce la ñ
   
     output$grafico<-renderPlot(
       if(input$selaño != "Todos"){
         z<-(datos%>%filter(Año==input$selaño))
         if(input$seleccion=="Gravedad")
         {ggplot(z,aes(x = Gravedad)) + 
-        geom_bar(fill="seagreen4") +
-        labs(x = "Gravedad", y = "Cantidad") + 
-        ggtitle("Gravedad de los siniestros")}
+          geom_bar(fill="seagreen4") +
+          labs(x = "Gravedad", y = "Cantidad") + 
+          ggtitle("Gravedad de los siniestros") +
+          theme(plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
+          }
         else if(input$seleccion=="Departamento")
         {ggplot(z,aes(x = fct_infreq(Departamento))) + 
-            geom_bar(fill="seagreen4") +
-            labs(x = "Departamento", y = "Cantidad") +
-            coord_flip() + 
-            ggtitle("Siniestros por departamento")}
+          geom_bar(fill="seagreen4") +
+          labs(x = "Departamento", y = "Cantidad") +
+          coord_flip() + 
+          ggtitle("Siniestros por departamento") +
+          theme(plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
+          }
         else if(input$seleccion=="Tipo de siniestro")
         {ggplot(z,aes(x = fct_infreq(Tipo_de_siniestro))) + 
-            geom_bar(fill="seagreen4") +
-            labs(x = "Tipo de siniestro", y = "Cantidad") + 
-            coord_flip() + 
-            ggtitle("Tipo de siniestro")}
+          geom_bar(fill="seagreen4") +
+          labs(x = "Tipo de siniestro", y = "Cantidad") + 
+          coord_flip() + 
+          ggtitle("Tipo de siniestro") +
+          theme(plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
+          }
         else if(input$seleccion=="Mes")
         {z%>%
-            group_by(Mes, Año) %>%
-            summarize(n = n()) %>%
-            ggplot(aes(Mes, n)) +
-            geom_line(size = 1 , color = "seagreen4") +
-            scale_x_continuous(breaks = seq(1,12,1), 
+          group_by(Mes, Año) %>%
+          summarize(n = n()) %>%
+          ggplot(aes(Mes, n)) +
+           geom_line(size = 1 , color = "seagreen4") +
+           scale_x_continuous(breaks = seq(1,12,1), 
                                labels = c("Enero", "Febrero", "Marzo", "Abril","Mayo", "Junio", "Julio", "Agosto", "Setiembre", "Octubre", "Noviembre", "Diciembre")) +
-            labs(x = "Mes", y = "Cantidad") + 
-            ggtitle("Siniestros por mes")}
-        else if(input$seleccion=="Dia de la semana")
+           labs(x = "Mes", y = "Cantidad") + 
+           ggtitle("Siniestros por mes") +
+           theme(plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
+          }
+        else if(input$seleccion=="Día de la semana")
         {z %>%
-            mutate(Dia_semana = wday(Fecha, label = TRUE)) %>%
-            ggplot(aes(x = Dia_semana)) + 
-            geom_bar(color = "seagreen4") + 
-            scale_x_discrete(labels = c("DOMINGO", "LUNES", "MARTES", "MIÉRCOLES", "JUEVES","VIERNES", "SÁBADO" )) +
-            labs(x = "Día de la semana", y = "Cantidad") + 
-            ggtitle("Siniestros por dia de la semana")
+          mutate(Dia_semana = wday(as.Date(Fecha, "%d/%m/%Y"), label = TRUE)) %>%
+          ggplot(aes(x = Dia_semana)) + 
+           geom_bar(fill = "seagreen4") + 
+           scale_x_discrete(labels = c("DOMINGO", "LUNES", "MARTES", "MIÉRCOLES", "JUEVES","VIERNES", "SÁBADO" )) +
+           labs(x = "Día de la semana", y = "Cantidad") + 
+           ggtitle("Siniestros por día de la semana") +
+           theme(plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
         }
         else if(input$seleccion=="Hora")
         {ggplot(z,aes(x = Hora)) + 
-            geom_bar(fill="seagreen4") +
-            scale_x_continuous(breaks = seq(0,23,1)) +
-            labs(x = "Hora", y = "Cantidad") + 
-            ggtitle("Siniestros por hora")}
+          geom_bar(fill="seagreen4") +
+          scale_x_continuous(breaks = seq(0,23,1)) +
+          labs(x = "Hora", y = "Cantidad") + 
+          ggtitle("Siniestros por hora") +
+          theme(plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
+          }
       }
       else{
         if(input$seleccion=="Gravedad")
-        {datos%>%ggplot(aes(x = Gravedad)) + 
-          geom_bar(fill="seagreen4") +
-          labs(x = "Gravedad", y = "Cantidad") + 
-          ggtitle("Gravedad de los siniestros")}
+        {datos%>%
+          ggplot(aes(x = Gravedad)) + 
+           geom_bar(fill="seagreen4") +
+           labs(x = "Gravedad", y = "Cantidad") + 
+           ggtitle("Gravedad de los siniestros") +
+           theme(plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
+          }
         else if(input$seleccion=="Departamento")
-        {datos%>%ggplot(aes(x = fct_infreq(Departamento))) + 
-            geom_bar(fill="seagreen4") +
-            labs(x = "Departamento", y = "Cantidad") + 
-            coord_flip() + 
-            ggtitle("Siniestros por departamento")}
+        {datos%>%
+          ggplot(aes(x = fct_infreq(Departamento))) + 
+           geom_bar(fill="seagreen4") +
+           labs(x = "Departamento", y = "Cantidad") + 
+           coord_flip() + 
+           ggtitle("Siniestros por departamento") +
+           theme(plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
+          }
         else if(input$seleccion=="Tipo de siniestro")
-        {datos%>%ggplot(aes(x = fct_infreq(Tipo_de_siniestro))) + 
-            geom_bar(fill="seagreen4") +
-            labs(x = "Tipo de siniestro", y = "Cantidad") +
-            coord_flip() + 
-            ggtitle("Tipo de siniestro")}
+        {datos%>%
+          ggplot(aes(x = fct_infreq(Tipo_de_siniestro))) + 
+           geom_bar(fill="seagreen4") +
+           labs(x = "Tipo de siniestro", y = "Cantidad") +
+           coord_flip() + 
+           ggtitle("Tipo de siniestro") +
+           theme(plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
+          }
         else if(input$seleccion=="Mes")
         {datos %>%
-            group_by(Mes, Año) %>%
-            summarize(n = n()) %>%
-            ggplot(aes(Mes, n, color = factor(Año))) +
-            geom_line(size = 1) +
-            scale_x_continuous(breaks = seq(1,12,1), 
+          group_by(Mes, Año) %>%
+          summarize(n = n()) %>%
+          ggplot(aes(Mes, n, color = factor(Año))) +
+           geom_line(size = 1) +
+           scale_x_continuous(breaks = seq(1,12,1), 
                                labels = c("Enero", "Febrero", "Marzo", "Abril","Mayo", "Junio", "Julio", "Agosto", "Setiembre", "Octubre", "Noviembre", "Diciembre")) +
-            labs(x = "Mes", y = "Cantidad", color = "Año") + 
-            ggtitle("Siniestros por mes")}
-        else if(input$seleccion=="Dia de la semana")
+           labs(x = "Mes", y = "Cantidad", color = "Año") + 
+           ggtitle("Siniestros por mes") +
+           theme(plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
+          }
+        else if(input$seleccion=="Día de la semana")
         {datos %>%
-            mutate(Dia_semana = wday(Fecha, label = TRUE)) %>%
+            mutate(Dia_semana = wday(as.Date(Fecha, "%d/%m/%Y"), label = TRUE)) %>%
             ggplot(aes(x = Dia_semana)) + 
-            geom_bar(color = "seagreen4") + 
+            geom_bar(fill = "seagreen4") + 
             scale_x_discrete(labels = c("DOMINGO", "LUNES", "MARTES", "MIÉRCOLES", "JUEVES","VIERNES", "SÁBADO" )) +
             labs(x = "Día de la semana", y = "Cantidad") + 
-            ggtitle("Siniestros por dia de la semana")
+            ggtitle("Siniestros por día de la semana") +
+            theme(plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
         }
         else if(input$seleccion=="Hora")
-        {datos%>%ggplot(aes(x = Hora)) + 
-            geom_bar(fill = "seagreen4") +
-            scale_x_continuous(breaks = seq(0,23,1)) +
-            labs(x = "Hora", y = "Cantidad") + 
-            ggtitle("Siniestros por hora")}
+        {datos%>%
+          ggplot(aes(x = Hora)) + 
+           geom_bar(fill = "seagreen4") +
+           scale_x_continuous(breaks = seq(0,23,1)) +
+           labs(x = "Hora", y = "Cantidad") + 
+           ggtitle("Siniestros por hora") +
+           theme(plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
+          }
       }
         
     )
@@ -226,53 +259,63 @@ server <- function(input, output) {
         q<-(datos%>%filter(Año==input$añoboton))
         if(ch1() != "Departamento"){
           if(input$choice1 == "Tipo de siniestro" & input$choice2 == "Gravedad"){
-            q%>%filter(Tipo_de_siniestro != 'SIN DATOS')%>%
+            q%>%
               ggplot(aes(x = Tipo_de_siniestro, fill = Gravedad)) + 
               geom_bar(position = "fill") + 
-              scale_color_brewer(palette = "Dark2") +
+              scale_fill_brewer(palette = "Dark2") +
               coord_flip() +
-              labs(x = "Tipo de siniestro", y = "Fracuencia") +
-              ggtitle("Tipo de siniestro segun gravedad")}
+              labs(x = "Tipo de siniestro", y = "Frecuencia") +
+              ggtitle("Tipo de siniestro según gravedad") +
+              theme(legend.title = element_text(face = "bold"), legend.position = "bottom", plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
+            }
           else if(input$choice1 == "Gravedad" & input$choice2 == "Tipo de siniestro"){
-            q%>%filter(Tipo_de_siniestro != 'SIN DATOS')%>%
+            q%>%
               ggplot(aes(x =Gravedad , fill =  Tipo_de_siniestro)) + 
-              geom_bar(position = "fill") + 
-              scale_color_brewer(palette = "Dark2") +
-              coord_flip() +
-              labs(x = "Gravedad", y = "Fracuencia") +
-              ggtitle("Gravedad segun tipo de siniestro")}
+               geom_bar(position = "fill") + 
+               scale_fill_brewer(palette = "Dark2", name = "Tipo de siniestro") +
+               coord_flip() +
+               labs(x = "Gravedad", y = "Frecuencia") +
+               ggtitle("Gravedad según tipo de siniestro") +
+               theme(legend.title = element_text(face = "bold"), legend.position = "bottom", plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
+            }
           else if(input$choice1 == "Tipo de siniestro" & input$choice2 == "Tipo de siniestro"){
-            q%>%filter(Tipo_de_siniestro != 'SIN DATOS')%>%
-            ggplot(aes(x = fct_infreq(Tipo_de_siniestro))) + 
+            q%>%
+             ggplot(aes(x = fct_infreq(Tipo_de_siniestro))) + 
               geom_bar(fill="seagreen4") +
               labs(x = "Tipo de siniestro", y = "Cantidad") + 
               coord_flip() + 
-              ggtitle("Tipo de siniestro")
+              ggtitle("Tipo de siniestro") +
+              theme(plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
           }
           else if(input$choice1 == "Gravedad" & input$choice2 == "Gravedad"){
-          q%>%filter(Tipo_de_siniestro != 'SIN DATOS')%>%
-            ggplot(aes(x = fct_infreq(Gravedad))) + 
-            geom_bar(fill="seagreen4") +
-            labs(x = "Gravedad", y = "Cantidad") + 
-            coord_flip() + 
-            ggtitle("Gravedad")
+          q%>%
+            ggplot(aes(x = Gravedad)) + 
+             geom_bar(fill="seagreen4") +
+             labs(x = "Gravedad", y = "Cantidad") + 
+             ggtitle("Gravedad de los siniestros") +
+             theme(plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))  
           }
         }#If de no departamento
         else if(input$choice1 == "Departamento"){
           if(input$choice2 == "Tipo de siniestro"){
-            q%>%filter(Tipo_de_siniestro != 'SIN DATOS')%>%
-            ggplot(aes(x = Departamento, fill = Tipo_de_siniestro)) + 
+            q%>%
+             ggplot(aes(x = Departamento, fill = Tipo_de_siniestro)) + 
               geom_bar(position = "fill") +
-              scale_color_brewer(palette = "Dark2") +
+              scale_fill_brewer(palette = "Dark2", name = "Tipo de siniestro") +
               coord_flip() +
-              labs(x = "Departamento", y = "Frecuencia")
+              labs(x = "Departamento", y = "Frecuencia") +
+              ggtitle("Departamento según tipo de siniestro") +
+              theme(legend.title = element_text(face = "bold"), legend.position = "bottom", plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
           }
           else if(input$choice2 == "Gravedad"){
-            q%>%ggplot(aes(x = Departamento, fill = Gravedad)) + 
+            q%>%
+             ggplot(aes(x = Departamento, fill = Gravedad)) + 
               geom_bar(position = "fill") +
-              scale_color_brewer(palette = "Dark2") +
+              scale_fill_brewer(palette = "Dark2") +
               coord_flip() +
-              labs(x = "Departamento", y = "Frecuencia")
+              labs(x = "Departamento", y = "Frecuencia") +
+              ggtitle("Departamento según gravedad") +
+              theme(legend.title = element_text(face = "bold"), legend.position = "bottom", plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
           }
         }#If de si departamento
           
@@ -284,53 +327,63 @@ server <- function(input, output) {
         q<-datos
         if(ch1() != "Departamento"){
           if(input$choice1 == "Tipo de siniestro" & input$choice2 == "Gravedad"){
-            q%>%filter(Tipo_de_siniestro != 'SIN DATOS')%>%
-              ggplot(aes(x = Tipo_de_siniestro, fill = Gravedad)) + 
+            q%>%
+             ggplot(aes(x = Tipo_de_siniestro, fill = Gravedad)) + 
               geom_bar(position = "fill") + 
-              scale_color_brewer(palette = "Dark2") +
+              scale_fill_brewer(palette = "Dark2") +
               coord_flip() +
-              labs(x = "Tipo de siniestro", y = "Fracuencia") +
-              ggtitle("Tipo de siniestro segun gravedad")}
+              labs(x = "Tipo de siniestro", y = "Frecuencia") +
+              ggtitle("Tipo de siniestro según gravedad") +
+              theme(legend.title = element_text(face = "bold"), legend.position = "bottom", plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
+            }
           else if(input$choice1 == "Gravedad" & input$choice2 == "Tipo de siniestro"){
-            q%>%filter(Tipo_de_siniestro != 'SIN DATOS')%>%
-              ggplot(aes(x =Gravedad , fill =  Tipo_de_siniestro)) + 
+            q%>%
+             ggplot(aes(x =Gravedad , fill =  Tipo_de_siniestro)) + 
               geom_bar(position = "fill") + 
-              scale_color_brewer(palette = "Dark2") +
+              scale_fill_brewer(palette = "Dark2", name = "Tipo de siniestro") +
               coord_flip() +
-              labs(x = "Gravedad", y = "Fracuencia") +
-              ggtitle("Gravedad segun tipo de siniestro")}
+              labs(x = "Gravedad", y = "Frecuencia") +
+              ggtitle("Gravedad según tipo de siniestro") +
+              theme(legend.title = element_text(face = "bold"), legend.position = "bottom", plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
+            }
           else if(input$choice1 == "Tipo de siniestro" & input$choice2 == "Tipo de siniestro"){
-            q%>%filter(Tipo_de_siniestro != 'SIN DATOS')%>%
-              ggplot(aes(x = fct_infreq(Tipo_de_siniestro))) + 
+            q%>%
+             ggplot(aes(x = fct_infreq(Tipo_de_siniestro))) + 
               geom_bar(fill="seagreen4") +
               labs(x = "Tipo de siniestro", y = "Cantidad") + 
               coord_flip() + 
-              ggtitle("Tipo de siniestro")
+              ggtitle("Tipo de siniestro") +
+              theme(plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
           }
           else if(input$choice1 == "Gravedad" & input$choice2 == "Gravedad"){
-            q%>%filter(Tipo_de_siniestro != 'SIN DATOS')%>%
-              ggplot(aes(x = fct_infreq(Gravedad))) + 
+            q%>%
+             ggplot(aes(x = Gravedad)) + 
               geom_bar(fill="seagreen4") +
-              labs(x = "Gravedad", y = "Cantidad") + 
-              coord_flip() + 
-              ggtitle("Gravedad")
+              labs(x = "Gravedad", y = "Cantidad") +
+              ggtitle("Gravedad de los siniestros") +
+              theme(plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
           }
         }#If de no departamento
         else if(input$choice1 == "Departamento"){
           if(input$choice2 == "Tipo de siniestro"){
-            q%>%filter(Tipo_de_siniestro != 'SIN DATOS')%>%
-              ggplot(aes(x = Departamento, fill = Tipo_de_siniestro)) + 
+            q%>%
+             ggplot(aes(x = Departamento, fill = Tipo_de_siniestro)) + 
               geom_bar(position = "fill") +
-              scale_color_brewer(palette = "Dark2") +
+              scale_fill_brewer(palette = "Dark2", name = "Tipo de siniestro") +
               coord_flip() +
-              labs(x = "Departamento", y = "Frecuencia")
+              labs(x = "Departamento", y = "Frecuencia") +
+              ggtitle("Departamento según tipo de siniestro") +
+              theme(legend.title = element_text(face = "bold"), legend.position = "bottom", plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
           }
           else if(input$choice2 == "Gravedad"){
-            q%>%ggplot(aes(x = Departamento, fill = Gravedad)) + 
+            q%>%
+             ggplot(aes(x = Departamento, fill = Gravedad)) + 
               geom_bar(position = "fill") +
-              scale_color_brewer(palette = "Dark2") +
+              scale_fill_brewer(palette = "Dark2") +
               coord_flip() +
-              labs(x = "Departamento", y = "Frecuencia")
+              labs(x = "Departamento", y = "Frecuencia") +
+              ggtitle("Departamento según gravedad") +
+              theme(legend.title = element_text(face = "bold"), legend.position = "bottom", plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
           }
         }
       }
@@ -412,3 +465,7 @@ server <- function(input, output) {
 
 # Run the application 
 shinyApp(ui = ui, server = server)
+
+
+
+

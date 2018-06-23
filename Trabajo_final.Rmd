@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE, tidy.opts = list(width.cutoff = 50), tidy = T
 
 El siguiente trabajo se enmarca dentro de la materia "Nuevas tecnologías para el análisis estadístico de datos" de la carrera Licenciatura en Estadística.  
 
-Para el mismo se elige trabajar con los datos de los siniestros de tránsito ocurridos en Uruguay en el período 2013-2017 obtenidos de la página web de la Unidad Nacional de Seguridad Vial (UNASEV) dado que el tema representa una problemática actual para la cual se busca generar información de interés para entender mejor las características de ocurrencia de los siniestros. 
+Para el mismo se elige trabajar con los datos de los siniestros de tránsito ocurridos en Uruguay en el período 2013-2017 obtenidos de la página web de la Unidad Nacional de Seguridad Vial (UNASEV) dado que el tema representa una problemática actual para la cual se busca generar información de interés para entender mejor las características de la siniestralidad del país. 
 
 El principal objetivo del trabajo es aplicar las técnicas aprendidas en el curso para realizar el análisis exploratorio de los datos seleccionados, lo cuál también implica incluir visualizaciones apropiadas y una buena interpretación de las mismas.
 Como objetivos adicionales se busca que el trabajo sea completamente reproducible y esté disponible en GitHub para colaboraciones futuras, y poder comunicar los principales resultados del mismo mediante una aplicación shiny.
@@ -34,7 +34,7 @@ Para poder realizar un mejor análisis se agregaron las variables Año y Mes, to
 
 A partir de una primera aproximación con los datos se observa que la mayoría de las variables son cualitativas (Calle, Tipo de siniestro, Gravedad, Día de la semana, Departamento, Localidad), y las restantes cuantitativas (Año, Mes, Hora, longitud, latitud). En principio no se detecta la presencia de datos faltantes, pero si de una observación con la descripción "SIN DATOs" en la variable Tipo de siniestro, la cuál se decide sacar.
 
-Para el análisis se decide trabajar con las variables Tipo de siniestro, Gravedad, Día de la semana, Departamento, Hora, Año y Mes. **Si nos da el tiempo incluimos latitud y longitud parael mapa en shiny, sino lo agregamos en comentarios finales como posible trabajo futuro**  
+Para el análisis se decide trabajar con las variables Tipo de siniestro, Gravedad, Día de la semana, Departamento, Hora, Año y Mes. 
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
 library(tidyverse)
@@ -91,7 +91,7 @@ s <- summary(datos)
 ## Análisis Exploratorio
 
 El análisis exploratorio intenta responder diversas preguntas que se generan a partir de la primera visualización de los datos, como por ejemplo:
-- ¿Cómo varían la cantidad de siniestros a través de los años del período analizado?
+- ¿Cómo varía la cantidad de siniestros a través de los años del período analizado?
 - ¿Hay un "comportamiento" temporal para los siniestros, ya sea menusal, diario o por hora?
 - ¿Qué relacion hay entre los tipos de siniestros y la gravedad de los mismos?
 - A partir de la información por departamento, ¿podemos caracterizarlos?
@@ -101,6 +101,7 @@ Comenzamos con un análisis temporal explorando los datos a través de los años
 En primer lugar nos planteamos cuantficar el número de siniestros en los diferentes años de análisis para luego realizar un gráfico donde pretendemos ver la variación de los mismos.
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = cap1, fig.width = 6, fig.height = 4}
+library(ggpmisc)
 
 #Resumen de datos
 r <- datos %>%
@@ -112,7 +113,10 @@ r %>%
   ggplot(aes(x = Año, y = Cantidad)) + 
   geom_line(size = 1, color = "seagreen4") +
   labs(x = "Año", y = "Cantidad") +
-  ggtitle("Siniestros por año") 
+  ggtitle("Siniestros por año") +
+  theme(plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
+
+##agregar etiquetas con el valor maximo y minimo
 
 cap1 <- "A partir del gráfico podemos observar que del año 2013 al 2015 hubo un incremento sostenido en la cantidad de siniestros habiendo un descenso en el año 2016 para volver a crecer en el 2017, aunque por debajo de los años 2014 y 2015. De todas formas no se observa una variación importante a lo largo del período."
 
@@ -130,7 +134,7 @@ datos %>%
   scale_color_brewer(palette = "Dark2") +
   scale_x_continuous(breaks = seq(1,12,1), 
                      labels = c("Ene", "Feb", "Mar", "Abr","May", "Jun", "Jul", "Ago", "Set", "Oct", "Nov", "Dic")) +
-  theme(legend.position = "bottom") +
+  theme(legend.position = "bottom", plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold")) +
   labs(x = "Mes", y = "Cantidad", color = "Año") +
   ggtitle("Siniestros por mes")
 
@@ -144,39 +148,39 @@ Ahora vamos a ver si hay un comportamiento semanal, para esto en primer lugar va
 ```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = cap3, fig.width = 6, fig.height = 4}
 
 datos %>%
-  mutate(Dia_semana = wday(Fecha, label = TRUE)) %>%
-  group_by(Dia_semana, Año) %>%
-  summarise(Cantidad = n()) %>%
-  ggplot(aes(x = factor(Dia_semana), y = Cantidad)) +
-  geom_point(color = "seagreen4") +  
-  facet_wrap(~ Año) +
-  scale_x_discrete(labels = c("DOM", "LUN", "MAR", "MIÉ", "JUE","VIE", "SÁB" )) +
-  labs(x = "Día de la semana", y = "Cantidad") +
-  ggtitle("Siniestros por día de la semana (anual)")
+  mutate(Dia_semana = wday(as.Date(Fecha, "%d/%m/%Y"), label = TRUE)) %>%
+  ggplot(aes(x = Dia_semana)) + 
+    geom_bar(fill = "seagreen4") + 
+    scale_x_discrete(labels = c("DOM", "LUN", "MAR", "MIÉ", "JUE","VIE", "SÁB" )) +
+    labs(x = "Día de la semana", y = "Cantidad") + 
+    ggtitle("Siniestros por día de la semana (anual)") +
+    facet_wrap(~ Año) +
+    theme(plot.title = element_text(size = rel(1.5)), axis.title =  element_text(face = "bold"))
 
-cap3 <- "No se observa una caracterización clara a partir de los gráficos aunque esto se corresponde a la idea previa que se tenía. En la semana, de lunes a viernes, el flujo vehicular suele ser superior a los fines de semana por lo que se espera haya más siniestros, la ausencia de picos claros en los días de fin de semana afirman esta idea. Es más, si observamos el único año que muestra los días viernes y sábados como los de mayor cantidad de siniestros de forma clara correspnde al 2015, año en que se da el máximo de siniesros en el período analizado."
+cap3 <- "Se observa un incremento en los siniesros los días lunes, viernes y sábados siendo estables el resto de los días. Esto parece concordar con el mayor movimiento que se de los fines de semana. "
 
 ```
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = cap4, fig.width = 6, fig.height = 4}
 
 datos %>%
-  mutate(Dia_semana = wday(Fecha, label = TRUE)) %>%
-  group_by(Dia_semana, Mes) %>%
-  summarise(Cantidad = n()) %>%
-  ggplot(aes(x = factor(Dia_semana), y = Cantidad)) +
-  geom_point(color = "seagreen4") +  
-  facet_wrap(~ Mes) +
-  scale_x_discrete(labels = c("DOM", "LUN", "MAR", "MIÉ", "JUE","VIE", "SÁB" )) +
-  labs(x = "Día de la semana", y = "Cantidad") +
-  ggtitle("Siniestros por día de la semana (mensual)")
+  mutate(Dia_semana = wday(as.Date(Fecha, "%d/%m/%Y"), label = TRUE)) %>%
+  ggplot(aes(x = Dia_semana)) + 
+    geom_bar(fill = "seagreen4") + 
+    scale_x_discrete(labels = c("DOM", "LUN", "MAR", "MIÉ", "JUE","VIE", "SÁB" )) +
+    labs(x = "Día de la semana", y = "Cantidad") + 
+    ggtitle("Siniestros por día de la semana (mensual)") +
+    facet_wrap(~ Mes) +
+    theme(plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
 
-cap4 <- "En el comportamiento mensual podemos ver en el mes de enero que los picos se dan en el final y comienzo de la semana, esto concuerda con el movimiento que se genera en este mes los fines de semana por motivo de la temporada de verano. En marzo se ve el un aumento en los siniestros los días que suelen coincidir con los feriados de semana de turismo. El resto de los meses habría que hacer un análisis más profundo para entender los resultados."
+
+###cambiar las etiquetas de los meses!!
+
+cap4 <- "En el gráfico por mes vemos el mismo comportamiento que en el gráfico anual, los lunes,viernes y sábados se ve un aumento en los sinietros. Tambien visualizamos el aumento que hay en diciembre en los siniestros en general."
 
 ```
 
-
-Siguiendo con el análisis exploratorio, ahora vamos a ver que pasa con la hora del siniestro. Primero vamos a graficar la cantidad de siniestros por hora para cada año y luego por día de la semana. 
+Siguiendo con el análisis, vamos a ver que sucede con la hora de los siniestro graficando la cantidad de siniestros por hora para cada año y luego por día de la semana. 
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = cap5}
 
@@ -186,36 +190,41 @@ datos %>%
   scale_x_continuous(breaks = seq(0,23,1)) +
   labs(x = "Hora del siniestro", y = "Cantidad") +
   facet_wrap(~ Año) + 
-  ggtitle("Siniestros por hora (anual)")
+  ggtitle("Siniestros por hora (anual)") +
+  theme(plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
 
-cap5 <- "A partir de los gráficos se observa que el comportamiento es muy similar  en todos los años siendo el horario de 17 a 19 horas el que presenta mayor cantidad de siniestros."
+
+##ver si podemos mejorar el eje de las horas
+
+cap5 <- "A partir de los gráficos se observa que el comportamiento es muy similar en todos los años siendo el horario de 17 a 19 horas el que presenta mayor cantidad de siniestros."
 
 ```
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = cap6}
 
 datos %>%
-  mutate(Dia_semana = wday(Fecha, label = TRUE)) %>%
+  mutate(Dia_semana = wday(as.Date(Fecha, "%d/%m/%Y"), label = TRUE)) %>%
   ggplot(aes(x = Hora)) + 
   geom_bar(fill = "seagreen4") +
   scale_x_continuous(breaks = seq(0,23,1)) +
   labs(x = "Hora del siniestro", y = "Cantidad") +
   facet_wrap(~ Dia_semana) +
-  ggtitle("Siniestros por hora (días de la semana)")
+  ggtitle("Siniestros por hora (semanal)") +
+  theme(plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
+
+## etiquetasde los dias en el facet y ver si podemos mejorar el eje de las horas
 
 cap6 <- "Observamos que el comportamiento es similar en todos los días de la semana viendo al igual que en el gráfico por años que el horarios de 17 a 19 horas es donde ocurrieron la mayor cantidad de siniestros."
 
 ```
 
-A partir del análisis realizado hasta el momento con las variables temporales podemos decir que el año con mayor cantidad de siniestros fue el 2015 con un total de 31.048, mientras que 2016 fue el de menor cantidad con 28.596 siniestros. De estos datos decimos que la diferencia entre el número máximo de accidentes registrados y el mínimo es de 2.452.
-
-SEGUIR CON UN RESUMEN DE LAS PRINCIPALES CONCLUSIONES DEL ANÁLISIS TEMPORAL
+**A partir del análisis realizado hasta el momento con las variables temporales podemos decir que el año con mayor cantidad de siniestros fue el 2015 con un total de 31.048, mientras que 2016 fue el de menor cantidad con 28.596 siniestros. De estos datos decimos que la diferencia entre el número máximo de accidentes registrados y el mínimo es de 2.452. SEGUIR CON UN RESUMEN DE LAS PRINCIPALES CONCLUSIONES DEL ANÁLISIS TEMPORAL**
 
 
-
+**Introduccion al nuevo análisis, a los gráficos, agregar comentarios, mejorar los graficos y concluir. Lo mismo para el análisis departamental**
 Analisis por tipo de siniestro y gravedad de los mismos, vamos a cruzar estas variables y luego vamos a verlas con el factor temporal
 
-Tipos de siniestros en los distintos años
+Continuando,evaluaremos si existe diferencias entre la cantidad de accidentes segun tipos de siniestros en los distintos años.
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = cap7, fig.width = 6, fig.height = 4}
 
@@ -227,11 +236,11 @@ datos %>%
   labs(x = "Tipo de siniestro", y = "Cantidad") +
   ggtitle("Tipo de siniestros")
 
-cap7 <- ""
+cap7 <- "No se observa una diferencia significativa en las cantidades de siniestros de cada tipo segun los años, parece constante.En cada año las colisiones entre vehiculos son los  tipo de siniestro mas frecuentes."
 
 ```
 
-Gravedad de los siniestros por año
+De manera analoga,como es relevante considerar las posibles diferencias en cantidad de siniestros segun gravedad para cadaaño, graficaremos como fueron estas cantidades. 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = cap8, fig.width = 6, fig.height = 4}
 
 datos %>%
@@ -241,11 +250,12 @@ datos %>%
   labs(x = "Gravedad del siniestro", y = "Cantidad") +
   ggtitle("Gravedad de los siniestros")
 
-cap8 <- ""
+cap8 <- "Se puede observar que a lo largo de los años, las cantidades de siniestros fatales y graves se han mantenido casi constantes mientras que los siniestros con gravedad leve han disminuido y aumentado el numero de accidentes sin lesionados aunque levemente."
 
 ```
 
-gravedad y tipo de siniestros 
+Debido a que no todo tipo de siniestros tienen como resultado los mismos niveles de gravedad en los accidentados, una visualizacion de como estas dos variables se distribuyen conjuntamente puede ser algo util para captar este efecto.
+Ademas los separaremos por año, por si esta estructura a la vez cambia segun el año.
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = cap9, fig.width = 6, fig.height = 4}
 
@@ -253,34 +263,32 @@ datos %>%
   ggplot(aes(x = Tipo_de_siniestro, fill = Gravedad)) + 
   geom_bar(position = "fill") + 
   coord_flip() +
-  facet_wrap(~ Año) +
+  facet_wrap(~Año) +
   theme(legend.position = "bottom") +
   labs(x = "Tipo de siniestro", y = "Fracuencia") +
   ggtitle("Gravedad por tipo de siniestro")
 
-cap9 <- ""
+cap9 <- "Como era esperable, los accidentes con menor proporcion de no lesionados son los correspondientes a los atropellos de peaton siendo estos los tipos de siniestros con mas cantidad de resultados fatales.Algo quizas no tan esperado fuera que las colisiones con obstaculos tengan la mayor proporcion de selutados sin lesionados."
 
 ```
 
-gravedad por dia de la semana
-
+Si bien vimos anteriormente que los dias de la semana no afectan en la cantidad de accidentes, quizas podrian estar afectando otra variable como la gravedad del siniestro.
+Asi que consideramos graficar como se distribuye la gravedad de los accidentes segun el dia de la semana.
 ```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = cap10, fig.width = 6, fig.height = 4}
 
 datos %>%
   mutate(Dia_semana = wday(Fecha, label = TRUE)) %>%
   ggplot(aes(x = factor(Dia_semana), fill = Gravedad)) + 
   geom_bar(position = "fill") + 
-  facet_wrap(~ Año) +
+  facet_wrap(~Año) +
   theme(legend.position = "bottom") +
   scale_x_discrete(labels = c("DOMINGO", "LUNES", "MARTES", "MIÉRCOLES", "JUEVES","VIERNES", "SÁBADO" )) +
   labs(x = "Día de la semana", y = "Cantidad") +
   ggtitle("Gravedad por día de la semana")
 
-cap10 <- ""
+cap10 <- "No hay una relacion entre el dia de la semana y la gravedad del accidente"
 
 ```
- Ver si poneos alguno más de gravedad y TS
- 
  Análisis por departamento.
  
  Cantidad de siniestros por departamento
@@ -289,28 +297,37 @@ cap10 <- ""
  
  Gravedad por departamento
  
- Haceos algo temporal por  departamento?
+ Hacemos algo temporal por  departamento?
 
 
 ## Aplicación Shiny
+En la aplicacion Shiny realizada, continuamos mas a fondo con este analisis exploratorio inicial, considerando analisis de variables individuales asi como variables cruzadas pudiendo enfocar el grafico en cualquier año deseado.
+Ademas, incluimos una distribucion geografica de los siniestros segun varias categorias en el al mapa de Uruguay donde se veran las diferencias de cantidad de siniestro segun departamenro.
 
-Acá hay que explicar que hay en la shiny
+
 
 
 ## Comentarios finales
 
+A partir de los analisis realizados podemos extraer algunas conclusiones :
+-El efecto anual en la cantidad de siniestros no parece aplicarse, pero si se observa una variacion en la gravedad de los accidentes a lo largo de los años, presentando una mejoria.(menos accidentes graves y mas sin lesionados)
+-La distribucion semanal no tiene un efecto en la cantidad de accidentes pero la mensual si la tiene, dandose la mayor cantidad de accidentes los meses de marzo y diciembre.
+-Tambien hay una distribucion interesante de los accidentes por hora, dandose el pico en las horas 17 y 18 independientemente del dia de la semana, mes o año.
+-Geograficamente, si bien es evidente que en Montevideo se dieran la mayor cantidad de accidentes, el mayor ratio de siniestros cada 100 habitantes se da en Paisandú. Tambien se pueden observar las diferencias en el ratio de accidentes segun el tipo de siniestro y su gravedad destacando por ejemplo que San Jose tiene el mayor ratio de accidentes fatales en el pais o que en Paisandu se producen la mayor cantidad de colisiones entre vehiculos por cada 100 habitantes.
+
+
+Asi tambien, hay que señalar posibles agregados y continuaciones que se le pueden adjuntar a este trabajo.
+Como principal continuacion, se buscaria poder modelar y predecir los siniestros de años futuros utilizando modelacion segun series temporales.Asi como esto, tambien el poder luego contrastar y evaluar los modelos propuestos con los resultados publicados a futuro.
+Tambien se podria agregar una distribucion geografica mas prescisa al analisis, llegando al punto de identificacion exacta de donde ocurrio el accidente basandose en coordenadas y las calles de ocurrencia.
+
+
+**Si nos da el tiempo incluimos latitud y longitud parael mapa en shiny, sino lo agregamos en comentarios finales como posible trabajo futuro**  
 
 
 ## Bibliografía
 
 - R for Data Science - Garrett Grolemund, Hadley Wickham (<http://r4ds.had.co.nz/>)  
 - ggplot2 Elegant Graphics for Data Analysis - Hadley Wickham  
-- Datos: P?gina web UNASEV (<http://aplicaciones.unasev.gub.uy/mapas/AdministracionMapaIndicadores/AdministracionMapaIndicadores_Alta>)
+- Datos: Página web UNASEV (<http://aplicaciones.unasev.gub.uy/mapas/AdministracionMapaIndicadores/AdministracionMapaIndicadores_Alta>)
 
-###Cosas para hacer
--Restar graficos irrelevantes
--Cambiar selectinput para año y variable(el filtro de año va afuera del if)
-_Usar tags para comentarios
--Cambiar paleta de colores del mapa y cambiar la "variable" por la que contamos
--Grafico de series
--Extra:Generar mapa con puntos de concentracion
+
