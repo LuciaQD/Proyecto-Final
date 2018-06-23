@@ -289,11 +289,27 @@ datos %>%
 cap10 <- "No hay una relacion entre el dia de la semana y la gravedad del accidente"
 
 ```
- Análisis por departamento.
- 
- Cantidad de siniestros por departamento
- 
- Tipo de siniestro por departamento
+##Análisis por departamento
+Proseguiremos con un analisis geografico de los siniestros y notaremos las diferencias que surgen de los distintos departamentos con respecto a la cantidad de siniestros incluyendo a su vez otras de las variables categoricas que tenemos disponibles.
+
+Comencemos primero observando unicamente la cantidad de accidentes segun departamento:
+```{r}
+datos %>%
+  ggplot(aes(x = fct_infreq(Departamento))) + 
+  geom_bar(fill="seagreen4") +
+  coord_flip() + 
+  labs(x = "Departamento", y = "Cantidad")+
+  ggtitle("Cantidad de siniestros por departamento")
+
+cap11<-("Montevideo tiene una cantidad de accidentes mayor, como era lo esperado, seguido de Canelones y Maldonado")
+```
+
+Luego miraremos como 
+
+```{r}
+
+```
+
  
  Gravedad por departamento
  
