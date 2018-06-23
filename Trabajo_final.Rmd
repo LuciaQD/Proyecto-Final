@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE, tidy.opts = list(width.cutoff = 50), tidy = T
 
 El siguiente trabajo se enmarca dentro de la materia "Nuevas tecnologías para el análisis estadístico de datos" de la carrera Licenciatura en Estadística.  
 
-Para el mismo se elige trabajar con los datos de los siniestros de tránsito ocurridos en Uruguay en el período 2013-2017 obtenidos de la página web de la Unidad Nacional de Seguridad Vial (UNASEV) dado que el tema representa una problemática actual para la cual se busca generar información de interés para entender mejor las características de ocurrencia de los siniestros. 
+Para el mismo se elige trabajar con los datos de los siniestros de tránsito ocurridos en Uruguay en el período 2013-2017 obtenidos de la página web de la Unidad Nacional de Seguridad Vial (UNASEV) dado que el tema representa una problemática actual para la cual se busca generar información de interés para entender mejor las características de la siniestralidad  del país. 
 
 El principal objetivo del trabajo es aplicar las técnicas aprendidas en el curso para realizar el análisis exploratorio de los datos seleccionados, lo cuál también implica incluir visualizaciones apropiadas y una buena interpretación de las mismas.
 Como objetivos adicionales se busca que el trabajo sea completamente reproducible y esté disponible en GitHub para colaboraciones futuras, y poder comunicar los principales resultados del mismo mediante una aplicación shiny.
@@ -159,6 +159,18 @@ cap3 <- "No se observa una caracterización clara a partir de los gráficos aunq
 ```
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = cap4, fig.width = 6, fig.height = 4}
+
+datos %>%
+  mutate(Dia_semana = wday(as.Date(Fecha, "%d/%m/%Y"), label = TRUE)) %>%
+  ggplot(aes(x = Dia_semana)) + 
+    geom_bar(fill = "seagreen4") + 
+    scale_x_discrete(labels = c("DOM", "LUN", "MAR", "MIÉ", "JUE","VIE", "SÁB" )) +
+    labs(x = "Día de la semana", y = "Cantidad") + 
+    ggtitle("Siniestros por día de la semana") +
+    facet_wrap(~ Mes)
+   theme(plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
+       
+
 
 datos %>%
   mutate(Dia_semana = wday(Fecha, label = TRUE)) %>%

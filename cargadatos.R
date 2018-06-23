@@ -39,3 +39,4 @@ datos <- as.data.frame(bind_rows(base2013, base2014, base2015, base2016, base201
   rename_at(5, ~ "Dia_semana") %>%
   filter(Tipo_de_siniestro != 'SIN DATOS') %>%
   mutate(Año = year(as.Date(Fecha, "%d/%m/%Y")), Mes = month(as.Date(Fecha, "%d/%m/%Y")))
+
