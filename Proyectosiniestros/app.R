@@ -1,12 +1,5 @@
 library(shiny)
 library(tidyverse)
-library(rgdal)
-library(raster)
-library(maptools)
-library(broom)
-library(ggmosaic)
-library(lubridate)
-library(shinythemes)
 
 ui <- fluidPage(theme = shinytheme("sandstone"),
   titlePanel("Siniestros de tránsito en Uruguay"),
