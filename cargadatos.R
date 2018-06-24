@@ -1,4 +1,9 @@
 library(readr)
+library(tidyverse)
+library(lubridate)
+
+#1 Subimos los archivos
+
 Este_2013 <- read_csv("Siniestros/2013/Este_2013.txt")
 Oeste_2013 <- read_csv("Siniestros/2013/Oeste_2013.txt")
 Norte_2013 <- read_csv("Siniestros/2013/Norte_2013.txt")
@@ -24,7 +29,7 @@ Oeste_2017 <- read_csv("Siniestros/2017/Oeste_2017.txt")
 Norte_2017 <- read_csv("Siniestros/2017/Norte_2017.txt")
 Montevideo_2017 <- read_csv("Siniestros/2017/Montevideo_2017.txt")
 
-#2 Armamos las bases por a?o
+#2 Armamos las bases por año
 
 base2013 <- bind_rows(Este_2013, Oeste_2013, Norte_2013, Montevideo_2013)
 base2014 <- bind_rows(Este_2014, Oeste_2014, Norte_2014, Montevideo_2014) 
@@ -32,11 +37,11 @@ base2015 <- bind_rows(Este_2015, Oeste_2015, Norte_2015, Montevideo_2015)
 base2016 <- bind_rows(Este_2016, Oeste_2016, Norte_2016, Montevideo_2016)  
 base2017 <- bind_rows(Este_2017,Oeste_2017,Norte_2017,Montevideo_2017)
 
-#3 Armamos la base de todos los a?os, cambiamos los nombres de las variables con espacio en el mismo y agregamos las variables A?o y Mes 
+#3 Armamos la base de todos los años, cambiamos los nombres de las variables con espacio en el mismo y agregamos las variables Año y Mes 
 
 datos <- as.data.frame(bind_rows(base2013, base2014, base2015, base2016, base2017)) %>% 
   rename_at(3, ~"Tipo_de_siniestro") %>%  
   rename_at(5, ~ "Dia_semana") %>%
-  filter(Tipo_de_siniestro != 'SIN DATOS') %>%
+  filter(Tipo_de_siniestro != 'SIN DATOS') %>%  #Sacamos una observacion con el valor 'SIN DATOS' en la variable Tipo de siniestro
   mutate(Año = year(as.Date(Fecha, "%d/%m/%Y")), Mes = month(as.Date(Fecha, "%d/%m/%Y")))
 

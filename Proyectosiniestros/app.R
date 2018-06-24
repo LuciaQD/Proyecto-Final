@@ -13,23 +13,41 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
   tabsetPanel(
     #Panel de introduccion
     tabPanel("Resumen",
-
-             p("La seguridad vial en Uruguay siempre ha sido un tema de gran importancia....."
-               
-             ),
-             p("La presente aplicacion tiene como objetivo mostrar la influencia de ciertas variables
-               en la cantidad de siniestros de transito ocurridos en el periodo 2013-2017.",br(),
-               "La base que usamos para esto fue extraida de los datos abiertos de la Unidad Nacional de Seguridad Vial
-               juntando datos de los siniestros ocurridos en el periodo mencionado."
-               ),
-             p("Hola2"),
-
+        fluidRow(
+          column(9,
              br(),
-             p(h5("El siguiente trabajo se enmarca dentro de la materia Nuevas tecnologías para el análisis estadístico de datos de la carrera Licenciatura en Estadística.")),
-             p(h5("Para el mismo se elige trabajar con los datos de los siniestros de tránsito ocurridos en Uruguay en el período 2013-2017 obtenidos de la página web de la Unidad Nacional de Seguridad Vial (UNASEV) dado que el tema representa una problemática actual para la cual se busca generar información de interés para entender mejor las características de la siniestralidad del país.")),
-             p(h5("Fuente de los datos:", href = "http://aplicaciones.unasev.gub.uy/mapas/AdministracionMapaIndicadores/AdministracionMapaIndicadores_Alta"))
-
+             p(h4(tags$b("Introducción"))),
+             p("La seguridad vial en Uruguay siempre ha sido un tema de gran importancia y en el que se ha trabajado de manera constante 
+                para lograr reducir los siniestros y sus consecuencias.",
+               br(),
+               "A partir del año  2007 se crea la Unidad Nacional de Seguridad Vial (UNASEV) con el fin de regular y controlar las actividades 
+                relativas al tránsito y la Seguridad Vial en todo el territorio nacional.
+                Dicha institución cuenta con los registros de todos los siniestros de tránsito ocurridos en el país desde al año 2011, 
+                información que se encuentra disponible para toda la población."
              ),
+             p(h4(tags$b("Aplicación"))),
+             p("La presente aplicación tiene como objetivo caracterizar los siniestros de tránsito ocurridos en Uruguay en el período 2013-2017
+                a través de ciertas variables de interés",
+               br(),
+               "Presentamos tres visualizaciones distintas con las que buscamos mostrar resultados de interés para el objetivo planteado",
+               br(),
+               "La primera, Análisis Exploratorio, nos muestra la cantidad de siniestros ocurridos según las distintas variables mostrando así los
+               principales motivos y resultados de los siniestros de tránsito",
+               "La segunda, Variables Cruzadas, expone los resultados de análizar dos variables al mismo tiempo pudiendo así ver con mayor claridad 
+               lo expuesto en la primer visualización.",
+               br(),
+               "Finalmente, la última visualización le da un enfoque territorial al análisis pudiendo ver los resultados en el mapa de Uruguay por departamento.",
+             br(),
+             p("Fuente de datos:", a("Página web UNASEV", 
+                                     href = "http://aplicaciones.unasev.gub.uy/mapas/AdministracionMapaIndicadores/AdministracionMapaIndicadores_Alta"))
+
+             )),
+          column(3,
+            img(src = 'STAT_NT.png'),
+            em(h6("El presente trabajo se enmarca dentro de la materia Nuevas tecnologías para el análisis estadístico de datos de la carrera 
+                  Licenciatura en Estadística, UDELAR."))
+          )
+          )),
     #Panel de analisis exploratorio
     tabPanel("Análisis Exploratorio",
              #Layout de sidebar y main
