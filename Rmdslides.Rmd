@@ -1,6 +1,6 @@
 ---
-title: <span style="color:#88398A"> shiny II </span>
-author: <span style="color:#88398A"> <font size="6">SUS NOMBRES</span></font>
+title: <span style="color:#88398A"> Siniestros de tránsito en Uruguay </span>
+author: <span style="color:#88398A"> <font size="6">Bruno Bellagamba y Lucía Quintero</span></font>
 date: <span style="color:#88398A"> 24 de Junio, 2018
 output: ioslides_presentation
 widescreen: no
