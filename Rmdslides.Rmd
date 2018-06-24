@@ -77,7 +77,7 @@ Para poder realizar un mejor análisis se agregaron las variables Año y Mes, to
 
 ## <span style="color:#88398A">Datos</span>
 
-A partir de una primera aproximación con los datos se observa que la mayoría de las variables son cualitativas (Calle, Tipo de siniestro, Gravedad, Día de la semana, Departamento, Localidad), y las restantes cuantitativas (Año, Mes, Hora, longitud, latitud). En principio no se detecta la presencia de datos faltantes, pero si de una observación con la descripción "SIN DATOs" en la variable Tipo de siniestro, la cuál se decide sacar.
+A partir de una primera aproximación con los datos se observa que la mayoría de las variables son cualitativas (Calle, Tipo de siniestro, Gravedad, Día de la semana, Departamento, Localidad), y las restantes cuantitativas (Año, Mes, Hora, longitud, latitud). En principio no se detecta la presencia de datos faltantes, pero si de una observación con la descripción "SIN DATOS" en la variable Tipo de siniestro, la cuál se decide sacar.
 
 Para el análisis se decide trabajar con las variables Tipo de siniestro, Gravedad, Día de la semana, Departamento, Hora, Año y Mes.
 
