@@ -1,0 +1,129 @@
+---
+title: "<span style="color:#88398A"> shiny III </span>"
+author: "<span style="color:#88398A"> <font size="6"> \@STA_NT</span></font>"
+date: "<span style="color:#88398A"> 4 de Junio, 2018"
+output:
+  slidy_presentation: default
+  ioslides_presentation: default
+logo: logoclass.png
+widescreen: no
+---
+
+ <style>
+ .title-slide {
+     background-image: url(logo.png);
+     background-repeat: no-repeat;
+     padding:40px;
+     background-position: 90% 80%;
+     background-size: 200px 200px;
+   }
+   </style>
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(readr)
+library(shiny)
+library(ggmosaic)
+library(lubridate)
+library(ggpmisc)
+```
+
+## <span style="color:#88398A">Introducción</span>
+
+El siguiente trabajo se enmarca dentro de la materia "Nuevas tecnologías para el análisis estadístico de datos" de la carrera Licenciatura en Estadística.  
+
+Para el mismo se elige trabajar con los datos de los siniestros de tránsito ocurridos en Uruguay en el período 2013-2017 obtenidos de la página web de la Unidad Nacional de Seguridad Vial (UNASEV) dado que el tema representa una problemática actual para la cual se busca generar información de interés para entender mejor las características de la siniestralidad del país. 
+
+
+## <span style="color:#88398A">Datos</span>
+Los datos seleccionados corresponden a los siniestros de tránsito ocurridos en Uruguay en el período 2013-2017. Los mismos se obtuvieron de la página web de la UNASEV (<http://aplicaciones.unasev.gub.uy/mapas/AdministracionMapaIndicadores/AdministracionMapaIndicadores_Alta>)
+
+La base cuenta con 149.377 observaciones carrespondientes cada una a un siniestro de tránsito, y 10 variables que representan detalles de los mismos como el lugar, gravedad, fecha y hora y tipo de siniestro.
+Para poder realizar un mejor análisis se agregaron las variables Año y Mes, totalizando 12 variables para trabajar.
+
+## <span style="color:#88398A">Datos</span>
+
+A partir de una primera aproximación con los datos se observa que la mayoría de las variables son cualitativas (Calle, Tipo de siniestro, Gravedad, Día de la semana, Departamento, Localidad), y las restantes cuantitativas (Año, Mes, Hora, longitud, latitud). En principio no se detecta la presencia de datos faltantes, pero si de una observación con la descripción "SIN DATOs" en la variable Tipo de siniestro, la cuál se decide sacar.
+
+Para el análisis se decide trabajar con las variables Tipo de siniestro, Gravedad, Día de la semana, Departamento, Hora, Año y Mes. 
+
+## <span style="color:#88398A">Objetivos</span>
+
+El análisis exploratorio intenta responder diversas preguntas que se generan a partir de la primera visualización de los datos, como por ejemplo:
+- ¿Cómo varía la cantidad de siniestros a través de los años del período analizado?
+- ¿Hay un "comportamiento" temporal para los siniestros, ya sea menusal, diario o por hora?
+- ¿Qué relacion hay entre los tipos de siniestros y la gravedad de los mismos?
+- A partir de la información por departamento, ¿podemos caracterizarlos?
+
+Comenzamos con un análisis temporal explorando las observaciones a través de los años y meses, incluyendo también los días de la semana y hora de los siniestros.
+
+## <span style="color:#88398A">Siniestros por año</span>
+```{r,eval=TRUE,echo=FALSE}
+
+#Resumen de datos
+r <- datos %>%
+      group_by(Año) %>%
+      summarise(Cantidad = n())
+
+#Gráfico
+r %>%
+  ggplot(aes(x = Año, y = Cantidad)) + 
+  geom_line(size = 1, color = "seagreen4") +
+  labs(x = "Año", y = "Cantidad") +
+  ggtitle("Siniestros por año") +
+  theme(plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold"))
+
+##agregar etiquetas con el valor maximo y minimo
+
+cap1 <- "A partir del gráfico podemos observar que del año 2013 al 2015 hubo un incremento sostenido en la cantidad de siniestros habiendo un descenso en el año 2016 para volver a crecer en el 2017, aunque por debajo de los años 2014 y 2015. De todas formas no se observa una variación importante a lo largo del período."
+```
+  
+
+## <span style="color:#88398A">Siniestros por mes</span>
+
+```{r}
+datos %>%
+  group_by(Mes, Año) %>%
+  summarize(n = n()) %>%
+  ggplot(aes(Mes, n, color = factor(Año))) +
+  geom_line(size = 1) +
+  scale_color_brewer(palette = "Dark2") +
+  scale_x_continuous(breaks = seq(1,12,1), 
+                     labels = c("Ene", "Feb", "Mar", "Abr","May", "Jun", "Jul", "Ago", "Set", "Oct", "Nov", "Dic")) +
+  theme(legend.position = "bottom", plot.title = element_text(size = rel(1.5)), axis.title = element_text(face = "bold")) +
+  labs(x = "Mes", y = "Cantidad", color = "Año") +
+  ggtitle("Siniestros por mes")
+```
+
+## <span style="color:#88398A">Siniestros por mes</span>
+
+Se puede observar un comportamiento bastante regular en los meses de los diferentes años. Hay dos picos claros en los meses
+de marzo y diciembre los cuales coinciden con semana de turismo y fin de año respectivamente, algo que es razonable ya que son momentos donde aumenta el movimiento vehicular. 
+
+## <span style="color:#88398A">Comentarios finales</span>
+
+A partir de los analisis realizados podemos extraer algunas conclusiones :
+-El efecto anual en la cantidad de siniestros no parece aplicarse, pero si se observa una variacion en la gravedad de los accidentes a lo largo de los años, presentando una mejoria.(menos accidentes graves y mas sin lesionados)
+-La distribucion semanal no tiene un efecto en la cantidad de accidentes pero la mensual si la tiene, dandose la mayor cantidad de accidentes los meses de marzo y diciembre.
+-Tambien hay una distribucion interesante de los accidentes por hora, dandose el pico en las horas 17 y 18 independientemente del dia de la semana, mes o año.
+-Geograficamente, si bien es evidente que en Montevideo se dieran la mayor cantidad de accidentes, el mayor ratio de siniestros cada 100 habitantes se da en Paisandú. Tambien se pueden observar las diferencias en el ratio de accidentes segun el tipo de siniestro y su gravedad destacando por ejemplo que San Jose tiene el mayor ratio de accidentes fatales en el pais o que en Paisandu se producen la mayor cantidad de colisiones entre vehiculos por cada 100 habitantes.
+
+## <span style="color:#88398A">Continuacion del trabajo</span>
+Como principal continuacion, se buscaria poder modelar y predecir los siniestros de años futuros utilizando modelacion segun series temporales.Asi como esto, tambien el poder luego contrastar y evaluar los modelos propuestos con los resultados publicados a futuro.
+Tambien se podria agregar una distribucion geografica mas prescisa al analisis, llegando al punto de identificacion exacta de donde ocurrio el accidente basandose en coordenadas y las calles de ocurrencia.
+
+## <span style="color:#88398A">Bibliografia</span>
+
+- R for Data Science - Garrett Grolemund, Hadley Wickham (<http://r4ds.had.co.nz/>)  
+- ggplot2 Elegant Graphics for Data Analysis - Hadley Wickham  
+- Datos: Página web UNASEV (<http://aplicaciones.unasev.gub.uy/mapas/AdministracionMapaIndicadores/AdministracionMapaIndicadores_Alta>) 
+
+
+## <span style="color:#88398A">Siniestros por mes</span>
+
+
+
+
+
+
+
