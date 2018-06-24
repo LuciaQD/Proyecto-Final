@@ -101,8 +101,17 @@ datos %>%
 Se puede observar un comportamiento bastante regular en los meses de los diferentes años. Hay dos picos claros en los meses de marzo y diciembre los cuales coinciden con semana de turismo y fin de año respectivamente, algo que es razonable ya que son momentos donde aumenta el movimiento vehicular. 
 
 ## <span style="color:#88398A">Siniestros por dia de la semana</span>
+También nos interesa ver si hay un comportamiento semanal, para esto en primer lugar vamos a graficar los siniestros por día de la semana para cada año y luego para cada mes (acumulado de los 5 años).Se observa un incremento en los siniesros los días lunes, viernes y sábados siendo estables el resto de los días. Esto parece concordar con el mayor movimiento que se de los fines de semana. 
 ```{r}
-
+datos %>%
+  mutate(Dia_semana = wday(as.Date(Fecha, "%d/%m/%Y"), label = TRUE)) %>%
+  ggplot(aes(x = Dia_semana)) + 
+    geom_bar(fill = "seagreen4") + 
+    scale_x_discrete(labels = c("D", "L", "M", "M", "J","V", "S" )) +
+    labs(x = "Día de la semana", y = "Cantidad") + 
+    ggtitle("Siniestros por día de la semana (anual)") +
+    facet_wrap(~Año) +
+    theme(axis.title =  element_text(face = "bold"))
 ```
 
 
