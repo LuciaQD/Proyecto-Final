@@ -55,6 +55,7 @@ El análisis exploratorio intenta responder diversas preguntas que se generan a 
 - ¿Qué relacion hay entre los tipos de siniestros y la gravedad de los mismos?
 - A partir de la información por departamento, ¿podemos caracterizarlos?
 
+
 Comenzamos con un análisis temporal explorando las observaciones a través de los años y meses, incluyendo también los días de la semana y hora de los siniestros.
 
 ## <span style="color:#88398A">Siniestros por año</span>
@@ -97,8 +98,7 @@ datos %>%
 
 ## <span style="color:#88398A">Siniestros por mes</span>
 
-Se puede observar un comportamiento bastante regular en los meses de los diferentes años. Hay dos picos claros en los meses
-de marzo y diciembre los cuales coinciden con semana de turismo y fin de año respectivamente, algo que es razonable ya que son momentos donde aumenta el movimiento vehicular. 
+Se puede observar un comportamiento bastante regular en los meses de los diferentes años. Hay dos picos claros en los meses de marzo y diciembre los cuales coinciden con semana de turismo y fin de año respectivamente, algo que es razonable ya que son momentos donde aumenta el movimiento vehicular. 
 
 ## <span style="color:#88398A">Comentarios finales</span>
 
