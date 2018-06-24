@@ -1,4 +1,5 @@
 library(shiny)
+library(shinythemes)
 library(tidyverse)
 
 ui <- fluidPage(theme = shinytheme("sandstone"),
@@ -36,7 +37,7 @@ ui <- fluidPage(theme = shinytheme("sandstone"),
 
              )),
           column(3,
-            img(width = 50, height = 50 , src = "udelar.png"),
+              img(width = 50, height = 50 , src = "udelar.png"),
             em(h6("El presente trabajo se enmarca dentro de la materia Nuevas tecnologías para el análisis estadístico de datos de la carrera 
                   Licenciatura en Estadística, UDELAR."))
           )
