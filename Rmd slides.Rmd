@@ -3,8 +3,8 @@ title: "<span style="color:#88398A"> shiny III </span>"
 author: "<span style="color:#88398A"> <font size="6"> \@STA_NT</span></font>"
 date: "<span style="color:#88398A"> 4 de Junio, 2018"
 output:
-  slidy_presentation: default
   ioslides_presentation: default
+  slidy_presentation: default
 logo: logoclass.png
 widescreen: no
 ---
@@ -80,7 +80,7 @@ cap1 <- "A partir del gráfico podemos observar que del año 2013 al 2015 hubo u
 ```
   
 
-## <span style="color:#88398A">Siniestros por mes</span>
+## <span style="color:#88398A">Siniestros por dia de la semana</span>
 
 ```{r}
 datos %>%
@@ -99,6 +99,12 @@ datos %>%
 ## <span style="color:#88398A">Siniestros por mes</span>
 
 Se puede observar un comportamiento bastante regular en los meses de los diferentes años. Hay dos picos claros en los meses de marzo y diciembre los cuales coinciden con semana de turismo y fin de año respectivamente, algo que es razonable ya que son momentos donde aumenta el movimiento vehicular. 
+
+## <span style="color:#88398A">Siniestros por dia de la semana</span>
+```{r}
+
+```
+
 
 ## <span style="color:#88398A">Comentarios finales</span>
 
@@ -119,7 +125,7 @@ Tambien se podria agregar una distribucion geografica mas prescisa al analisis, 
 - Datos: Página web UNASEV (<http://aplicaciones.unasev.gub.uy/mapas/AdministracionMapaIndicadores/AdministracionMapaIndicadores_Alta>) 
 
 
-## <span style="color:#88398A">Siniestros por mes</span>
+
 
 
 
