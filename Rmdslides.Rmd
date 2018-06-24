@@ -70,6 +70,7 @@ Para el mismo se elige trabajar con los datos de los siniestros de tránsito ocu
 
 
 ## <span style="color:#88398A">Datos</span>
+
 Los datos seleccionados corresponden a los siniestros de tránsito ocurridos en Uruguay en el período 2013-2017. Los mismos se obtuvieron de la página web de la UNASEV (<http://aplicaciones.unasev.gub.uy/mapas/AdministracionMapaIndicadores/AdministracionMapaIndicadores_Alta>)
 
 La base cuenta con 149.377 observaciones carrespondientes cada una a un siniestro de tránsito, y 10 variables que representan detalles de los mismos como el lugar, gravedad, fecha y hora y tipo de siniestro.
@@ -84,6 +85,7 @@ Para el análisis se decide trabajar con las variables Tipo de siniestro, Graved
 ## <span style="color:#88398A">Objetivos</span>
 
 El análisis exploratorio intenta responder diversas preguntas que se generan a partir de la primera visualización de los datos, como por ejemplo:
+
 - ¿Cómo varía la cantidad de siniestros a través de los años del período analizado?
 - ¿Hay un "comportamiento" temporal para los siniestros, ya sea menusal, diario o por hora?
 - ¿Qué relacion hay entre los tipos de siniestros y la gravedad de los mismos?
@@ -93,6 +95,7 @@ El análisis exploratorio intenta responder diversas preguntas que se generan a 
 Comenzamos con un análisis temporal explorando las observaciones a través de los años y meses, incluyendo también los días de la semana y hora de los siniestros.
 
 ## <span style="color:#88398A">Siniestros por año</span>
+
 ```{r,eval=TRUE,echo=FALSE}
 
 #Resumen de datos
@@ -136,6 +139,9 @@ Se puede observar un comportamiento bastante regular en los meses de los diferen
 
 ## <span style="color:#88398A">Siniestros por dia de la semana</span>
 También nos interesa ver si hay un comportamiento semanal, para esto en primer lugar vamos a graficar los siniestros por día de la semana para cada año y luego para cada mes (acumulado de los 5 años).Se observa un incremento en los siniesros los días lunes, viernes y sábados siendo estables el resto de los días. Esto parece concordar con el mayor movimiento que se de los fines de semana.
+
+## <span style="color:#88398A">Siniestros por dia de la semana</span>
+
 ```{r}
 datos %>%
   mutate(Dia_semana = wday(as.Date(Fecha, "%d/%m/%Y"), label = TRUE)) %>%
@@ -185,6 +191,9 @@ datos %>%
 ## <span style="color:#88398A">Analisis de los siniestros segun gravedad</span>
 
 Se puede observar que a lo largo de los años, las cantidades de siniestros fatales y graves se han mantenido casi constantes mientras que los siniestros con gravedad leve han disminuído y aumentado el número de accidentes sin lesionados aunque levemente. También destacamos que la mayoría de los siniestros tienen consecuencias leves o sin causar lesionados.
+
+## <span style="color:#88398A">Analisis de los siniestros segun gravedad</span>
+
 ```{r}
 datos %>%
   ggplot(aes(x = Gravedad)) +
@@ -196,9 +205,12 @@ datos %>%
 ```
 
 ## <span style="color:#88398A">Variables conjuntamente</span>
+
 Para darle más profundidad al análisis, realizamos una visualizacion de como estas dos variables se distribuyen conjuntamente en cada año para ver que relación existe entre el motivo  del accidente y su consecuecia para los involucrados.
 
 Como era esperable, los accidentes con menor proporción de no lesionados son los correspondientes a los atropellos de peatón siendo estos los tipos de siniestros con más resultados fatales. Algo quizás no tan esperado es que las colisiones con obstáculos tengan la mayor proporción de reslutados sin lesionados.
+
+## <span style="color:#88398A">Variables conjuntamente</span>
 
 ```{r}
 
@@ -219,6 +231,9 @@ datos %>%
 
 Como poseemos la ubicacion en donde se ocurrio el accidente, es inetersante el contrastar como varia la cantidad de siniestros segun el departamento en el que ocurrio.
 Se puede observar que Montevideo es claramente el departamento con mayor cantidad de siniestros, un correcto análisis de esta situación sería tomar en cuenta la población de cada departamento. Vemos que no hay grandes cambios en el correr de los años
+
+## <span style="color:#88398A">Analisis espacial</span>
+
 ```{r}
 
 datos %>%
@@ -233,6 +248,7 @@ datos %>%
 
 
 ## <span style="color:#88398A">Analisis espacial con variables cualitativas</span>
+
 Si bien el departamento nos da una cierta informacion de la cantidad de accidentes esperable, tambien puede estar correlacionada con la gravedad de los accidentes que ahi ocurren o con el tipo de los mismo.
 Para esto los analizaremos las variables de manera conjunta con la distribucion departamental.
 
@@ -256,6 +272,10 @@ datos %>%
 
 Para finalizar vamos a observar que relación exite entre la gravedad de los siniestros y el departamento.
 Claramente la mayoría de los siniestros para todos los departamentos son sin lesionados o lesionados leves. San José es quien tiene la mayor proporcion de siniestros fatales y Paisandú el departamento con mayor proporcion de siniestros sin lesionados.
+
+
+## <span style="color:#88398A">Gravedad del siniestro segun departamento</span>
+
 ```{r}
 datos %>%
   ggplot(aes(x = Departamento, fill = Gravedad)) +
@@ -272,8 +292,14 @@ datos %>%
 
 A partir de los analisis realizados podemos extraer algunas conclusiones :
 -El efecto anual en la cantidad de siniestros no parece aplicarse, pero si se observa una variacion en la gravedad de los accidentes a lo largo de los años, presentando una mejoria.(menos accidentes graves y mas sin lesionados)
+
 -La distribucion semanal no tiene un efecto en la cantidad de accidentes pero la mensual si la tiene, dandose la mayor cantidad de accidentes los meses de marzo y diciembre.
+
 -Tambien hay una distribucion interesante de los accidentes por hora, dandose el pico en las horas 17 y 18 independientemente del dia de la semana, mes o año.
+
+## <span style="color:#88398A">Comentarios finales</span>
+
+
 -Geograficamente, si bien es evidente que en Montevideo se dieran la mayor cantidad de accidentes, el mayor ratio de siniestros cada 100 habitantes se da en Paisandú. Tambien se pueden observar las diferencias en el ratio de accidentes segun el tipo de siniestro y su gravedad destacando por ejemplo que San Jose tiene el mayor ratio de accidentes fatales en el pais o que en Paisandu se producen la mayor cantidad de colisiones entre vehiculos por cada 100 habitantes.
 
 ## <span style="color:#88398A">Continuacion del trabajo</span>
