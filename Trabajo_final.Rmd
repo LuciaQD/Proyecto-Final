@@ -274,7 +274,6 @@ cap9 <- "Como era esperable, los accidentes con menor proporción de no lesionad
 A modo de resumen podemos decir que los resultados del análisis de estas variables en el tiempo son constantes, siendo la colisión entre vehiculos la principal causa de los siniestros en Uruguay y siendo la gran mayoría con consecuencias leves o sin consecuencias para los involucrados. 
 
 Por último buscamos darle al análisis un enfoque territorial por lo que pasamos a visualizar las variables ya vistas por departamento.
-
 Para empezar vamos a cuantificar la cantidad de siniestros por departamento en los distintos años.
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE, fig.cap = cap10}
@@ -326,7 +325,7 @@ cap12 <- "Claramente la mayoría de los siniestros para todos los departamentos 
 
 ```
 
-De éste último análisis podemos destacar que la principal causa de los siniestros para todo el país se mantiene así para cada departamento como los resultados para los invlucrados en términos de gravedad. Más allá de que Montevideo es el departamento que registra mayor número de atropello de peatones y este es el motivo con mayor consecuencia fatal vemos qeu San José es el departamento con mayor número de siniestros fatales.
+De éste último análisis podemos destacar que la principal causa de los siniestros para todo el país se mantiene así para cada departamento como los resultados para los invlucrados en términos de gravedad. Más allá de que Montevideo es el departamento que registra mayor número de atropello de peatones y este es el motivo con mayor consecuencia fatal vemos que San José es el departamento con mayor número de siniestros fatales.
 
 
 ## Aplicación Shiny

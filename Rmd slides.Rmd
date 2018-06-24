@@ -114,6 +114,125 @@ datos %>%
     theme(axis.title =  element_text(face = "bold"))
 ```
 
+## <span style="color:#88398A">Sieniestros por hora</span>
+A continuacion veremos las variaciones de cantidad de siniestros por hora.
+El comportamiento es muy similar en todos los años siendo el horario de 17 a 19 horas el que presenta mayor cantidad de siniestros.
+```{r}
+datos %>%
+  ggplot(aes(x = Hora)) + 
+  geom_bar(fill = "seagreen4") +
+  scale_x_continuous(breaks = seq(0,23,1)) +
+  labs(x = "Hora del siniestro", y = "Cantidad") +
+  facet_wrap(~ Año) + 
+  ggtitle("Siniestros por hora (anual)") +
+  theme(axis.title = element_text(face = "bold"), axis.text.x = element_text(size=6))
+
+```
+
+
+## <span style="color:#88398A">Analisis de variables cualitativas</span>
+
+Luego de explorar temporalmente nuestro problema de interés pasamos a realizar el análisis a traves de las variables Tipo de siniestro y Gravedad, dos variables que a priori parecen ayudar en la caracterización del problema de estudio temporal.
+
+## <span style="color:#88398A">Accidentes segun tipos de siniestro</span>
+
+Se observa que la colisión entre vehiculos es la principal causa de los siniestros siguiendo por las caídas y despiestes en menor medida. No se   observa una diferencia significativa en las cantidades de siniestros de cada tipo en los diferentes años
+```{r}
+datos %>%
+  ggplot(aes(x = fct_infreq(Tipo_de_siniestro))) + 
+  geom_bar(fill = "seagreen4") +
+  coord_flip() +
+  facet_wrap(~ Año) +
+  theme(axis.text = element_text(size=7), axis.title = element_text(face = "bold")) +
+  labs(x = "Tipo de siniestro", y = "Cantidad") +
+  ggtitle("Tipo de siniestros")
+```
+
+## <span style="color:#88398A">Analisis de los siniestros segun gravedad</span>
+
+Se puede observar que a lo largo de los años, las cantidades de siniestros fatales y graves se han mantenido casi constantes mientras que los siniestros con gravedad leve han disminuído y aumentado el número de accidentes sin lesionados aunque levemente. También destacamos que la mayoría de los siniestros tienen consecuencias leves o sin causar lesionados.
+```{r}
+datos %>%
+  ggplot(aes(x = Gravedad)) + 
+  geom_bar(fill = "seagreen4") +
+  facet_wrap(~ Año) +
+  theme(axis.text = element_text(size=6), axis.title = element_text(face = "bold")) +
+  labs(x = "Gravedad del siniestro", y = "Cantidad") +
+  ggtitle("Gravedad de los siniestros")
+```
+
+## <span style="color:#88398A">Variables conjuntamente</span>
+Para darle más profundidad al análisis, realizamos una visualizacion de como estas dos variables se distribuyen conjuntamente en cada año para ver que relación existe entre el motivo  del accidente y su consecuecia para los involucrados. 
+
+Como era esperable, los accidentes con menor proporción de no lesionados son los correspondientes a los atropellos de peatón siendo estos los tipos de siniestros con más resultados fatales. Algo quizás no tan esperado es que las colisiones con obstáculos tengan la mayor proporción de reslutados sin lesionados.
+
+```{r}
+
+datos %>%
+  ggplot(aes(x = Tipo_de_siniestro, fill = Gravedad)) + 
+  geom_bar(position = "fill") + 
+  coord_flip() +
+  facet_wrap(~Año) +
+  scale_fill_brewer(palette = "Dark2") +
+  theme(legend.position = "bottom",axis.text = element_text(size = 7), axis.title = element_text(face = "bold")) +
+  labs(x = "Tipo de siniestro", y = "Fracuencia") +
+  ggtitle("Gravedad por tipo de siniestro")
+
+```
+
+
+## <span style="color:#88398A">Analisis espacial</span>
+
+Como poseemos la ubicacion en donde se ocurrio el accidente, es inetersante el contrastar como varia la cantidad de siniestros segun el departamento en el que ocurrio.
+Se puede observar que Montevideo es claramente el departamento con mayor cantidad de siniestros, un correcto análisis de esta situación sería tomar en cuenta la población de cada departamento. Vemos que no hay grandes cambios en el correr de los años
+```{r}
+
+datos %>%
+  ggplot(aes(x = fct_infreq(Departamento))) + 
+  geom_bar(fill = "seagreen4") +
+  coord_flip() +
+  facet_wrap(~ Año) +
+  theme(axis.text = element_text(size = 7), axis.title = element_text(face = "bold")) +
+  labs(x = "Departamento", y = "Cantidad") +
+  ggtitle("Siniestros por departamento")
+```
+
+
+## <span style="color:#88398A">Analisis espacial con variables cualitativas</span>
+Si bien el departamento nos da una cierta informacion de la cantidad de accidentes esperable, tambien puede estar correlacionada con la gravedad de los accidentes que ahi ocurren o con el tipo de los mismo. 
+Para esto los analizaremos las variables de manera conjunta con la distribucion departamental.
+
+
+## <span style="color:#88398A">Tipo de siniestro segun departamento</span>
+
+Se puede ver que en todos los departamentos la mayoría de los siniestros son causados por la colisión entre vehiculos. También se observa que Montevideo es el que mayor número de atropello de peatones tiene.
+
+```{r}
+datos %>%
+  ggplot(aes(x = Departamento, fill = Tipo_de_siniestro)) + 
+  geom_bar(position = "fill") +
+  scale_fill_brewer(palette = "Dark2", name = "Tipo de siniestro") +
+  coord_flip() +
+  theme(legend.position = "bottom", legend.text = element_text(size=7), axis.title = element_text(face = "bold")) +
+  labs(x = "Departamento", y = "Frecuencia") +
+  ggtitle("Tipo de siniestro por departamento")
+```
+
+## <span style="color:#88398A">Gravedad del siniestro segun departamento</span>
+
+Para finalizar vamos a observar que relación exite entre la gravedad de los siniestros y el departamento.
+Claramente la mayoría de los siniestros para todos los departamentos son sin lesionados o lesionados leves. San José es quien tiene la mayor proporcion de siniestros fatales y Paisandú el departamento con mayor proporcion de siniestros sin lesionados.
+```{r}
+datos %>%
+  ggplot(aes(x = Departamento, fill = Gravedad)) + 
+  geom_bar(position = "fill") +
+  scale_fill_brewer(palette = "Dark2") +
+  coord_flip() +
+  theme(legend.position = "bottom",  axis.title = element_text(face = "bold")) +
+  labs(x = "Departamento", y = "Frecuencia") +
+  ggtitle("Gravedad de los siniestros por departamento")
+```
+
 
 ## <span style="color:#88398A">Comentarios finales</span>
 
